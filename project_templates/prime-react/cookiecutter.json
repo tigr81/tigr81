@@ -1,8 +1,0 @@
-{
-  "name": "primereact",
-  "package_name": "{{ cookiecutter.name.lower().replace(' ', '-').replace('_', '-') }}",
-  "favicon_title": "Prime React Styled Mode + Tailwind CSS",
-  "home_page_title": "Home Page Title",
-  "bg_primary": "#258900",
-  "border_primary_lighter": "rgba(0, 166, 102, 0.5)"
-}
