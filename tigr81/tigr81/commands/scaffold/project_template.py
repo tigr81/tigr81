@@ -5,6 +5,7 @@ import click
 from pydantic import BaseModel, EmailStr
 import pathlib as pl
 
+from tigr81 import ORGANIZATION_LOCATION
 import typer
 
 PROJECT_TEMPLATE_DEFAULT_RELATIVE_PATH = pl.Path(".")
@@ -16,6 +17,10 @@ class ProjectTypeEnum(str, Enum):
     PRIME_REACT = "prime-react"
     # GCP_CLOUD_FUNCTION = "gcp_cloud_function"
     # COOKIECUTTER = "cookiecutter"
+
+    @property
+    def project_location(self):
+        return f"{ORGANIZATION_LOCATION}/{self}"
 
     @staticmethod
     def get_monorepo_types() -> List["ProjectTypeEnum"]:
@@ -92,6 +97,10 @@ class ProjectTemplate(BaseModel):
 
     class Config:
         use_enum_values = True
+
+    @property
+    def project_type_as_enum(self) -> ProjectTypeEnum:
+        return ProjectTypeEnum(self.project_type)
 
     @property
     def extra_content(self) -> Dict:

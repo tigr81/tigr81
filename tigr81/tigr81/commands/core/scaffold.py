@@ -2,8 +2,6 @@ from typing import List
 
 import typer
 from cookiecutter.main import cookiecutter
-from tigr81 import LOCAL_REPO_LOCATION, REPO_LOCATION
-from tigr81.cli_settings import CLI_SETTINGS
 from tigr81.commands.scaffold.project_template import (
     ProjectTemplate,
     ProjectTemplateOptions,
@@ -13,7 +11,7 @@ import pathlib as pl
 import tigr81.commands.core.gitw as gitw
 
 
-def scaffold(
+def scaffold_project_type(
     project_type: ProjectTypeEnum,
     default: bool = False,
     output_dir: pl.Path = pl.Path("."),
@@ -35,46 +33,41 @@ def scaffold_project_template(
     project_template: ProjectTemplate,
     default: bool = False,
     output_dir: pl.Path = pl.Path("."),
+    checkout: str = "main",
 ):
-    __PROJECT_TEMPLATE_LOCATION = REPO_LOCATION
-    checkout = "develop"
-
-    if CLI_SETTINGS.tigr81_environment == "local":
-        __PROJECT_TEMPLATE_LOCATION = LOCAL_REPO_LOCATION.as_posix()
-        checkout = None
-
+    template = project_template.project_type_as_enum.project_location
     typer.echo(
-        f"Scaffolding a {project_template.project_type} project template from {__PROJECT_TEMPLATE_LOCATION}"
+        f"Scaffolding a {project_template.project_type} project template from {template}"
     )
 
+    author_name, author_email = gitw.get_author_info()
+
+    project_template.project_options.author_name = author_name
+    project_template.project_options.author_email = author_email
+
     cookiecutter(
-        template=__PROJECT_TEMPLATE_LOCATION,
+        template=template,
         output_dir=output_dir,
         no_input=default,
         extra_context=project_template.extra_content,
         checkout=checkout,
-        directory=f"project_templates/{project_template.project_type}",
+        directory=str(project_template.project_type),
     )
 
 
 def scaffold_cookiecutter(
-    project_type: ProjectTypeEnum, output_dir: pl.Path = pl.Path(".")
+    project_type: ProjectTypeEnum, default: bool = False, output_dir: pl.Path = pl.Path("."), checkout: str = "main",
 ):
-    __PROJECT_TEMPLATE_LOCATION = REPO_LOCATION
-    checkout = "develop"
-
-    if CLI_SETTINGS.tigr81_environment == "local":
-        __PROJECT_TEMPLATE_LOCATION = LOCAL_REPO_LOCATION.as_posix()
+    template = project_type.project_location
     typer.echo(
-        f"Scaffolding a {project_type} project template from {__PROJECT_TEMPLATE_LOCATION}"
+        f"Scaffolding a {project_type} project template from {template}"
     )
-
     cookiecutter(
-        template=__PROJECT_TEMPLATE_LOCATION,
+        template=template,
         output_dir=output_dir,
-        no_input=False,
+        no_input=default,
         checkout=checkout,
-        directory=f"project_templates/{project_type}",
+        directory=str(project_type),
     )
 
 

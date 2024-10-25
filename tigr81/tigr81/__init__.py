@@ -19,4 +19,5 @@ USER_HUB_LOCATION.mkdir(exist_ok=True)
 AVAILABLE_HUBS = [HUBS_LOCATION, USER_HUB_LOCATION]
 
 PYPY_URL = "https://pypi.org/project/tigr81/"
-REPO_LOCATION = "https://github.com/giuseppeambrosio97/tigr81.git"
+REPO_LOCATION = "https://github.com/tigr81/tigr81.git"
+ORGANIZATION_LOCATION = "https://github.com/tigr81"

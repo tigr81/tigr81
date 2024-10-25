@@ -39,7 +39,7 @@ def scaffold(
             project_type=project_type, output_dir=output_dir
         )
     else:
-        scaffold_core.scaffold(
+        scaffold_core.scaffold_project_type(
             project_type=project_type, default=default, output_dir=output_dir
         )
 
