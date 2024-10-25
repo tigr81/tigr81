@@ -1,3 +1,4 @@
+from typing import Optional
 from typing_extensions import Annotated
 from cookiecutter.main import cookiecutter
 import typer
@@ -12,7 +13,9 @@ from tigr81.commands.scaffold.project_template import (
     ProjectTemplateOptions,
     ProjectTypeEnum,
 )
-from tigr81.commands.scaffold.select_project_type_interactive import select_project_type_interactive
+from tigr81.commands.scaffold.select_project_type_interactive import (
+    select_project_type_interactive,
+)
 
 
 def scaffold(
@@ -26,6 +29,16 @@ def scaffold(
         pl.Path("."),
         help="Set if you want to scaffold the project template in a specific directory",
     ),
+    dev: bool = typer.Option(
+        False, 
+        help="Set this flag to use the default local directory based on project type"
+    ),
+    local_dir: Optional[pl.Path] = typer.Option(
+        None, help="Specify a local folder for the template"
+    ),
+    checkout: str = typer.Option(
+        "main", help="Specify the branch for non-local scaffolding (default: main)"
+    ),
 ):
     """Scaffold a project template"""
 
@@ -33,14 +46,30 @@ def scaffold(
     if not project_type:
         project_type = select_project_type_interactive()
 
-    # Scaffolding logic
+    if dev and local_dir is None:
+        local_dir = str(project_type)
+
+    if local_dir is not None:
+        cookiecutter(
+            template=str(local_dir),
+            output_dir=output_dir / "scaffolded" if str(output_dir) == "." else output_dir,
+            no_input=default,
+        )
+        return
+    
     if project_type == ProjectTypeEnum.PRIME_REACT:
         scaffold_core.scaffold_cookiecutter(
-            project_type=project_type, output_dir=output_dir
+            project_type=project_type,
+            default=default,
+            output_dir=output_dir,
+            checkout=checkout,
         )
     else:
         scaffold_core.scaffold_project_type(
-            project_type=project_type, default=default, output_dir=output_dir
+            project_type=project_type,
+            default=default,
+            output_dir=output_dir,
+            checkout=checkout,
         )
 
 

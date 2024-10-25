@@ -15,6 +15,7 @@ def scaffold_project_type(
     project_type: ProjectTypeEnum,
     default: bool = False,
     output_dir: pl.Path = pl.Path("."),
+    checkout: str = "main",
 ):
     author_name, author_email = gitw.get_author_info()
 
@@ -26,7 +27,7 @@ def scaffold_project_type(
         ),
     )
 
-    scaffold_project_template(project_template, default=default, output_dir=output_dir)
+    scaffold_project_template(project_template, default=default, output_dir=output_dir, checkout=checkout)
 
 
 def scaffold_project_template(
