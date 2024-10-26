@@ -46,6 +46,14 @@ def scaffold(
         "--ck-url",
         help="Specify the url or path (for local scaffolding) of a cookiecutter project template",
     ),
+    git_url: str = typer.Option(
+        None,
+        "--git-url",
+        help="Specify the url of a git repo you want to scaffold",
+    ),
+    directory: Optional[pl.Path] = typer.Option(
+        None, help="Specify a relative path to a directory (for git_url and cookiecutter_url scaffolding templates)"
+    ),
 ):
     """Scaffold a project template"""
 
@@ -54,8 +62,19 @@ def scaffold(
         cookiecutter(
             template=cookiecutter_url,
             output_dir=output_dir,
+            directory=directory or ".",
             no_input=default,
             checkout=checkout or "main" ,
+        )
+        return
+    
+    if git_url is not None:
+        typer.echo(f"Scaffolding clone repo: {cookiecutter_url}")
+        gitw.clone_repo_directory(
+            repo_url=git_url,
+            checkout=checkout or "main",
+            directory=directory or pl.Path("."),
+            output_dir=output_dir,
         )
         return
 
@@ -67,6 +86,7 @@ def scaffold(
         local_dir = str(project_type)
 
     if local_dir is not None:
+        typer.echo(f"Scaffolding local: {cookiecutter_url}")
         cookiecutter(
             template=str(local_dir),
             output_dir=output_dir / "scaffolded"
@@ -80,6 +100,7 @@ def scaffold(
         checkout = gitw.get_latest_tag(repo_url=project_type.project_location)
 
     typer.echo("scaffolding checkout")
+    typer.echo(f"Tag: {checkout}")
 
     if project_type == ProjectTypeEnum.PRIME_REACT:
         scaffold_core.scaffold_cookiecutter(
