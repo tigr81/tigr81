@@ -1,4 +1,5 @@
 from typing import Optional
+from tigr81.commands.core import gitw
 from typing_extensions import Annotated
 from cookiecutter.main import cookiecutter
 import typer
@@ -37,7 +38,7 @@ def scaffold(
         None, help="Specify a local folder for the template"
     ),
     checkout: str = typer.Option(
-        "main", help="Specify the branch for non-local scaffolding (default: main)"
+        None, help="Specify the branch for non-local scaffolding (default: latest tag)"
     ),
 ):
     """Scaffold a project template"""
@@ -56,6 +57,11 @@ def scaffold(
             no_input=default,
         )
         return
+    
+    if checkout is None:
+        checkout = gitw.get_latest_tag(repo_url=project_type.project_location)
+
+    typer.echo("scaffolding checkout")
     
     if project_type == ProjectTypeEnum.PRIME_REACT:
         scaffold_core.scaffold_cookiecutter(

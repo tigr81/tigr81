@@ -4,6 +4,52 @@ import subprocess
 import tempfile
 from typing import Tuple
 
+import typer
+
+
+def get_latest_tag(repo_url: str) -> str:
+    """
+    Fetches the latest tag from a remote Git repository.
+
+    Args:
+        repo_url (str): The URL of the remote Git repository.
+
+    Returns:
+        str: The latest tag in semantic version order, or "0.0.0" if no tags are found.
+
+    This function uses `git ls-remote --tags` to list all tags in the specified remote
+    repository, then extracts and sorts them according to semantic versioning.
+    Annotated tags (those ending with '^{}') are ignored.
+    """
+    try:
+        # Fetch tags from the remote repository
+        result = subprocess.run(
+            ["git", "ls-remote", "--tags", repo_url],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True,
+        )
+
+        # Extract and filter tag names, ignoring annotated tags (those with '^{}' suffix)
+        tags = [
+            line.split("refs/tags/")[-1]
+            for line in result.stdout.splitlines()
+            if "refs/tags/" in line and not line.endswith("^{}")
+        ]
+
+        # Sort tags by semantic version order
+        tags.sort(key=lambda s: list(map(int, s.split("."))))
+
+        # Return the latest tag or "0.0.0" if no tags are found
+        latest_tag = tags[-1] if tags else "0.0.0"
+        typer.echo(f"Latest Tag: {latest_tag}")
+        return latest_tag
+
+    except subprocess.CalledProcessError as e:
+        typer.echo(f"Error fetching tags: {e.stderr}", err=True)
+        return "0.0.0"
+
 
 def get_author_info() -> Tuple[str, str]:
     """
@@ -99,10 +145,13 @@ if __name__ == "__main__":
     #     directory="."
     # )
     # print(s)
-    clone_repo_directory(
-        repo_url="https://github.com/primefaces/primereact-examples",
-        checkout="main",
-        directory=pl.Path("astro-basic-ts"),
-        # directory=pl.Path("."),
-        output_dir=pl.Path("dev"),
-    )
+    # clone_repo_directory(
+    #     repo_url="https://github.com/primefaces/primereact-examples",
+    #     checkout="main",
+    #     directory=pl.Path("astro-basic-ts"),
+    #     # directory=pl.Path("."),
+    #     output_dir=pl.Path("dev"),
+    # )
+
+    latest_tag = get_latest_tag(repo_url="https://github.com/tigr81/prime-react")
+    print(latest_tag)
