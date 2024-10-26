@@ -1,8 +1,5 @@
 name: tigr81_hub_templates
 hub_templates:
-  cookiecutter-hypermodern-python:
-    name: cookiecutter-hypermodern-python
-    template: https://github.com/cjolowicz/cookiecutter-hypermodern-python
   cookiecutter-ai-flock:
     name: cookiecutter-ai-flock
     template: https://github.com/LLMsLab/cookiecutter-ai-flock
