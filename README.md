@@ -8,10 +8,10 @@
 
 Tigr81 is a powerful and user-friendly project scaffolder that empowers you to kickstart your projects with just a single command. Designed with simplicity and ease of use in mind, tigr81 is the perfect companion for developers looking to streamline their project setup process. Currently, tigr81 supports three types of projects:
 
--   🌐 fastapi
--   📦 poetry_pkg
--   ⚛️ prime-react
--   🔜 more is coming soon!
+- 🌐 fastapi
+- 📦 poetry_pkg
+- ⚛️ prime-react
+- 🔜 more is coming soon!
 
 ## 📥 How to install tigr81?
 
@@ -56,3 +56,21 @@ Follow the interactive prompts, and tigr81 will guide you through the process of
 <div align="center">
   <p style="font-size: 1.2em; color: #4a4a4a;">Start your projects with ease using tigr81 - the project scaffolder that roars with simplicity and power! 🐯💪</p>
 </div>
+
+## 🚀 How to Deploy a New Version of tigr81?
+
+Deploying a new version of tigr81 is streamlined through a structured workflow to ensure stability and ease of deployment. Follow these steps:
+
+1. **Open a Feature Branch**: Begin by creating a new branch from `develop` for your new feature or fix:
+
+   ```bash
+   git checkout develop
+   git checkout -b feat/<your-feature-name>
+   ```
+
+2. Implement Your Changes: Add, commit, and push your changes to your feature branch.
+3. Create a Pull Request (PR) to develop:
+    - Open a PR targeting the develop branch.
+    - Include relevant information in the PR description to help reviewers understand your changes.
+4. Run the CI/CD Workflow Manually: Once your PR is merged into develop, manually trigger the CI/CD workflow to deploy the new version.
+5. Monitor the Deployment: After initiating the workflow, monitor its progress to ensure successful deployment.

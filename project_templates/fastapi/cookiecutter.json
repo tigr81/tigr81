@@ -1,9 +1,0 @@
-{
-  "name": "webserver",
-  "python_min_version": "3.8",
-  "package_name": "{{ cookiecutter.name.lower().replace(' ', '_').replace('-', '_') }}",
-  "description": "FAST API web app",
-  "author_name": "name surname",
-  "author_email": "email@gmail.com",
-  "dependencies": "{{cookiecutter.dependencies}}"
-}

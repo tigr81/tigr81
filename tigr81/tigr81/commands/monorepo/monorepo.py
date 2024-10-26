@@ -187,10 +187,11 @@ def scaffold():
 
     typer.echo("Monorepo scaffolding completed successfully")
 
-    mf_digraph = manifest.to_graphviz_digraph()
+    # FIX: fix monorepo graph visualization
+    # mf_digraph = manifest.to_graphviz_digraph()
 
-    typer.echo("Rendering the manifest...")
-    mf_digraph.render()
+    # typer.echo("Rendering the manifest...")
+    # mf_digraph.render()
 
 
 # Define a function to interactively prompt the user for input for a Pydantic BaseModel
