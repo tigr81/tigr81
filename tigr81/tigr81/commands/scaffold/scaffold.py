@@ -31,8 +31,8 @@ def scaffold(
         help="Set if you want to scaffold the project template in a specific directory",
     ),
     dev: bool = typer.Option(
-        False, 
-        help="Set this flag to use the default local directory based on project type"
+        False,
+        help="Set this flag to use the default local directory based on project type",
     ),
     local_dir: Optional[pl.Path] = typer.Option(
         None, help="Specify a local folder for the template"
@@ -40,8 +40,24 @@ def scaffold(
     checkout: str = typer.Option(
         None, help="Specify the branch for non-local scaffolding (default: latest tag)"
     ),
+    cookiecutter_url: str = typer.Option(
+        None,
+        "--cookiecutter-url",
+        "--ck-url",
+        help="Specify the url or path (for local scaffolding) of a cookiecutter project template",
+    ),
 ):
     """Scaffold a project template"""
+
+    if cookiecutter_url is not None:
+        typer.echo(f"Scaffolding custom cookiecutter: {cookiecutter_url}")
+        cookiecutter(
+            template=cookiecutter_url,
+            output_dir=output_dir,
+            no_input=default,
+            checkout=checkout or "main" ,
+        )
+        return
 
     # Prompt the user for project type if not provided
     if not project_type:
@@ -53,16 +69,18 @@ def scaffold(
     if local_dir is not None:
         cookiecutter(
             template=str(local_dir),
-            output_dir=output_dir / "scaffolded" if str(output_dir) == "." else output_dir,
+            output_dir=output_dir / "scaffolded"
+            if str(output_dir) == "."
+            else output_dir,
             no_input=default,
         )
         return
-    
+
     if checkout is None:
         checkout = gitw.get_latest_tag(repo_url=project_type.project_location)
 
     typer.echo("scaffolding checkout")
-    
+
     if project_type == ProjectTypeEnum.PRIME_REACT:
         scaffold_core.scaffold_cookiecutter(
             project_type=project_type,
