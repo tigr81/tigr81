@@ -17,6 +17,7 @@ from tigr81.commands.scaffold.project_template import (
 from tigr81.commands.scaffold.select_project_type_interactive import (
     select_project_type_interactive,
 )
+from copier import run_copy
 
 
 def scaffold(
@@ -46,6 +47,12 @@ def scaffold(
         "--ck-url",
         help="Specify the url or path (for local scaffolding) of a cookiecutter project template",
     ),
+    copier_url: str = typer.Option(
+        None,
+        "--copier-url",
+        "--cp-url",
+        help="Specify the url or path (for local scaffolding) of a copier project template",
+    ),
     git_url: str = typer.Option(
         None,
         "--git-url",
@@ -56,6 +63,16 @@ def scaffold(
     ),
 ):
     """Scaffold a project template"""
+    if copier_url is not None:
+        typer.echo(f"Scaffolding custom copier: {copier_url}")
+        run_copy(
+            src_path=copier_url,
+            dst_path=output_dir,
+            vcs_ref=checkout or "main",
+            defaults=default,
+        )
+        return 
+
 
     if cookiecutter_url is not None:
         typer.echo(f"Scaffolding custom cookiecutter: {cookiecutter_url}")
