@@ -3,11 +3,10 @@ from typing import Dict, List, Optional
 
 import click
 import typer
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 import tigr81.utils as tigr81_utils
 from tigr81 import ORGANIZATION_LOCATION
-from pydantic import ConfigDict
 
 PROJECT_TEMPLATE_DEFAULT_RELATIVE_PATH = pl.Path(".")
 

@@ -1,14 +1,13 @@
+import pathlib as pl
+import shutil
 import subprocess as sp
 import sys
 
 import typer
-import shutil
-import pathlib as pl
 
 
 class PoetryPM:
-    """
-    A utility class for managing Python dependencies using Poetry.
+    """A utility class for managing Python dependencies using Poetry.
 
     This class provides methods to interact with the Poetry package manager.
     It checks for the presence of Poetry, installs components, and removes
@@ -19,11 +18,11 @@ class PoetryPM:
         self.poetry_executable = shutil.which("poetry")
         if self.poetry_executable:
             result = sp.run(
-                [self.poetry_executable, "--version"], 
-                stdout=sp.PIPE, 
-                stderr=sp.PIPE, 
-                check=True, 
-                text=True
+                [self.poetry_executable, "--version"],
+                stdout=sp.PIPE,
+                stderr=sp.PIPE,
+                check=True,
+                text=True,
             )
             poetry_version = result.stdout.strip()
             typer.echo(f"Poetry executable: {self.poetry_executable}")
@@ -36,20 +35,22 @@ class PoetryPM:
         try:
             typer.echo(f"Installing component {cwd}...")
             result: sp.CompletedProcess = sp.run(
-                [self.poetry_executable, "install"], 
-                stdout=sp.PIPE, 
-                stderr=sp.PIPE, 
-                check=True, 
-                cwd=cwd
+                [self.poetry_executable, "install"],
+                stdout=sp.PIPE,
+                stderr=sp.PIPE,
+                check=True,
+                cwd=cwd,
             )
 
             typer.echo(result.stdout, color="green")
             typer.echo(result.stderr, color="red")
 
             if result.returncode != 0:
-                typer.echo("An error occurred while running 'poetry install'.", color="red")
+                typer.echo(
+                    "An error occurred while running 'poetry install'.", color="red"
+                )
                 sys.exit(1)
-        except sp.CalledProcessError as e:
+        except sp.CalledProcessError:
             typer.echo("An error occurred while running 'poetry install'.", color="red")
             sys.exit(1)
 
@@ -57,19 +58,25 @@ class PoetryPM:
         try:
             typer.echo(f"Removing dependency {dependency} from {cwd}...")
             result: sp.CompletedProcess = sp.run(
-                [self.poetry_executable, "remove", dependency], 
-                stdout=sp.PIPE, 
-                stderr=sp.PIPE, 
-                check=True, 
-                cwd=cwd
+                [self.poetry_executable, "remove", dependency],
+                stdout=sp.PIPE,
+                stderr=sp.PIPE,
+                check=True,
+                cwd=cwd,
             )
 
             typer.echo(result.stdout, color="green")
             typer.echo(result.stderr, color="red")
 
             if result.returncode != 0:
-                typer.echo(f"An error occurred while running 'poetry remove {dependency}'.", color="red")
+                typer.echo(
+                    f"An error occurred while running 'poetry remove {dependency}'.",
+                    color="red",
+                )
                 sys.exit(1)
-        except sp.CalledProcessError as e:
-            typer.echo(f"An error occurred while running 'poetry remove {dependency}'.", color="red")
+        except sp.CalledProcessError:
+            typer.echo(
+                f"An error occurred while running 'poetry remove {dependency}'.",
+                color="red",
+            )
             sys.exit(1)

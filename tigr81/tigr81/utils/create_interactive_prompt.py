@@ -1,4 +1,5 @@
-from typing import List, Any, Dict, Optional
+from typing import Any, Dict, List, Optional
+
 from InquirerPy import prompt
 
 
@@ -8,8 +9,7 @@ def create_interactive_prompt(
     message: str = "Select an option",
     display_transform: callable = lambda x: x,
 ) -> Any:
-    """
-    Utility function to prompt the user to select a value interactively.
+    """Utility function to prompt the user to select a value interactively.
 
     Parameters:
         values (List[Any]): List of values to present as options.

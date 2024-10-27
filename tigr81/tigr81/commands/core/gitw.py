@@ -8,8 +8,7 @@ import typer
 
 
 def get_latest_tag(repo_url: str) -> str:
-    """
-    Fetches the latest tag from a remote Git repository.
+    """Fetches the latest tag from a remote Git repository.
 
     Args:
         repo_url (str): The URL of the remote Git repository.
@@ -52,8 +51,7 @@ def get_latest_tag(repo_url: str) -> str:
 
 
 def get_author_info() -> Tuple[str, str]:
-    """
-    Retrieves the author's name and email from the Git configuration.
+    """Retrieves the author's name and email from the Git configuration.
 
     Returns:
         Tuple[str, str]: A tuple containing the author's name and email.
@@ -72,8 +70,7 @@ def get_author_info() -> Tuple[str, str]:
 def is_cookiecutter_template(
     repo_url: str, checkout: str = None, directory: pl.Path = None
 ) -> bool:
-    """
-    Checks if the specified repository contains a cookiecutter template.
+    """Checks if the specified repository contains a cookiecutter template.
 
     Args:
         repo_url (str): The URL of the Git repository.
@@ -104,10 +101,7 @@ def is_cookiecutter_template(
 def clone_repo_directory(
     repo_url: str, checkout: str, directory: pl.Path, output_dir: pl.Path
 ) -> None:
-    """
-    Clones a specific directory from the repository using sparse checkout.
-    If the directory is ".", it clones the entire repository.
-    """
+    """Clones a specific directory from the repository using sparse checkout. If the directory is ".", it clones the entire repository."""
     output_dir_str = str(output_dir)
     checkout = checkout or "main"
     if output_dir_str == ".":

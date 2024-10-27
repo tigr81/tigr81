@@ -1,13 +1,14 @@
-"""
-Handle hub templates.
-    - Configure you hub template (also private hub templates)
-    - Scaffold a project template from hub templates
-    - Add hub templates (public, private, local)
-    - Update hub templates properties
-    - Delete hub templates
+"""Handle hub templates.
+
+- Configure you hub template (also private hub templates)
+- Scaffold a project template from hub templates
+- Add hub templates (public, private, local)
+- Update hub templates properties
+- Delete hub templates
 """
 
 import pathlib as pl
+
 import copier
 import typer
 from cookiecutter.main import cookiecutter
@@ -79,7 +80,6 @@ def remove(
     hub_name: Annotated[str, typer.Argument(help="The name of the hub")] = None,
 ):
     """Remove a hub or a hub template based on user choice"""
-
     hubs = load_hubs([USER_HUB_LOCATION])
 
     if len(hubs) == 0:
@@ -144,7 +144,7 @@ def scaffold(
         False, help="Set to False to enable input during cookiecutter execution"
     ),
 ):
-    """Scaffold a template from an existing hub templates"""
+    """Scaffold a template from an existing hub templates."""
     hubs = load_hubs()
 
     if not hub_name:

@@ -60,10 +60,11 @@ def scaffold(
         help="Specify the url of a git repo you want to scaffold",
     ),
     directory: Optional[pl.Path] = typer.Option(
-        None, help="Specify a relative path to a directory (for git_url and cookiecutter_url scaffolding templates)"
+        None,
+        help="Specify a relative path to a directory (for git_url and cookiecutter_url scaffolding templates)",
     ),
 ):
-    """Scaffold a project template"""
+    """Scaffold a project template."""
     if copier_url is not None:
         typer.echo(f"Scaffolding custom copier: {copier_url}")
         copier.run_copy(
@@ -72,8 +73,7 @@ def scaffold(
             vcs_ref=checkout or "main",
             defaults=default,
         )
-        return 
-
+        return
 
     if cookiecutter_url is not None:
         typer.echo(f"Scaffolding custom cookiecutter: {cookiecutter_url}")
@@ -82,10 +82,10 @@ def scaffold(
             output_dir=output_dir,
             directory=directory or ".",
             no_input=default,
-            checkout=checkout or "main" ,
+            checkout=checkout or "main",
         )
         return
-    
+
     if git_url is not None:
         typer.echo(f"Scaffolding clone repo: {cookiecutter_url}")
         gitw.clone_repo_directory(
