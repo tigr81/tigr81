@@ -16,7 +16,6 @@ pydantic = "^2.4.2"
 email-validator = "^2.0.0.post2"
 pyyaml = "^6.0.1"
 graphviz = "^0.20.1"
-pydantic-settings = "^2.2.1"
 inquirerpy = "^0.3.4"
 copier = "^9.4.1"
 
