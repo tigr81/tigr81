@@ -8,14 +8,22 @@ from pydantic import BaseModel
 import tigr81.utils as tigr81_utils
 
 
+class TemplateTypeEnum(tigr81_utils.StrEnum):
+    COOKIECUTTER = "cookiecutter"
+    COPIER = "copier"
+    RAW_GIT = "raw_git"
+
+
 class HubTemplate(BaseModel):
     name: str
     template: Union[str, pl.Path]
     checkout: Optional[str] = None
     directory: Optional[str] = None
+    template_type: TemplateTypeEnum
 
     def __str__(self):
         components = [
+            f"\tTemplate type: {self.template_type}",
             f"\tTemplate name: {self.name}",
             f"\tTemplate location: {self.template}",
         ]
@@ -27,6 +35,10 @@ class HubTemplate(BaseModel):
 
     @staticmethod
     def prompt() -> "HubTemplate":
+        template_type = tigr81_utils.create_interactive_prompt(
+            values=list(TemplateTypeEnum),
+            message="Select a template type",
+        )
         template = typer.prompt("Enter the template location (git repo, local)")
 
         hub_template_name = tigr81_utils.extract_template_name(template)
@@ -52,6 +64,7 @@ class HubTemplate(BaseModel):
             template=template,
             checkout=checkout,
             directory=directory,
+            template_type=template_type,
         )
 
 

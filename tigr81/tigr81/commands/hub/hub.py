@@ -8,7 +8,7 @@ Handle hub templates.
 """
 
 import pathlib as pl
-
+import copier
 import typer
 from cookiecutter.main import cookiecutter
 from typing_extensions import Annotated
@@ -21,7 +21,7 @@ from tigr81.commands.hub.helpers import (
     is_hub_name_valid,
     load_hubs,
 )
-from tigr81.commands.hub.models import Hub
+from tigr81.commands.hub.models import Hub, TemplateTypeEnum
 
 app = typer.Typer()
 
@@ -124,6 +124,7 @@ def remove(
         hub_path.unlink()
         typer.echo(f"Hub '{hub_name}' deleted successfully.")
 
+
 @app.command()
 def scaffold(
     hub_name: Annotated[
@@ -138,6 +139,9 @@ def scaffold(
     output_dir: pl.Path = typer.Option(
         pl.Path("."),
         help="Set if you want to scaffold the project template in a specific directory",
+    ),
+    default: bool = typer.Option(
+        False, help="Set to False to enable input during cookiecutter execution"
     ),
 ):
     """Scaffold a template from an existing hub templates"""
@@ -168,25 +172,29 @@ def scaffold(
     hub_template = get_template_from_hubs(
         hub_name=hub_name, template_name=template_name, hubs=hubs
     )
-
-    _is_cookiecutter_template = gitw.is_cookiecutter_template(
-        repo_url=hub_template.template,
-        checkout=hub_template.checkout,
-        directory=hub_template.directory,
-    )
-
-    if _is_cookiecutter_template:
+    _template_type = hub_template.template_type
+    typer.echo(f"Scaffolding template type: {_template_type}")
+    if _template_type == TemplateTypeEnum.COOKIECUTTER:
         cookiecutter(
             template=hub_template.template,
             output_dir=output_dir,
-            no_input=False,
+            no_input=default,
             checkout=hub_template.checkout,
             directory=hub_template.directory,
         )
-    else:
+    elif _template_type == TemplateTypeEnum.RAW_GIT:
         gitw.clone_repo_directory(
             repo_url=hub_template.template,
             output_dir=output_dir,
             directory=hub_template.directory,
             checkout=hub_template.checkout,
         )
+    elif _template_type == TemplateTypeEnum.COPIER:
+        copier.run_copy(
+            src_path=hub_template.template,
+            dst_path=output_dir,
+            vcs_ref=hub_template.checkout,
+            defaults=default,
+        )
+    else:
+        raise ValueError("Unknown template type")
