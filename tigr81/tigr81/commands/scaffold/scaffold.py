@@ -1,13 +1,15 @@
-from typing import Optional
-from tigr81.commands.core import gitw
-from typing_extensions import Annotated
-from cookiecutter.main import cookiecutter
-import typer
 import pathlib as pl
+from typing import Optional
 
+import cookiecutter.main as cookiecutter
+import copier
+import typer
+from typing_extensions import Annotated
+
+import tigr81.commands.core.scaffold as scaffold_core
 from tigr81 import LOCAL_REPO_LOCATION, REPO_LOCATION
 from tigr81.cli_settings import CLI_SETTINGS
-import tigr81.commands.core.scaffold as scaffold_core
+from tigr81.commands.core import gitw
 from tigr81.commands.scaffold.project_template import (
     Dependency,
     ProjectTemplate,
@@ -17,7 +19,6 @@ from tigr81.commands.scaffold.project_template import (
 from tigr81.commands.scaffold.select_project_type_interactive import (
     select_project_type_interactive,
 )
-from copier import run_copy
 
 
 def scaffold(
@@ -65,7 +66,7 @@ def scaffold(
     """Scaffold a project template"""
     if copier_url is not None:
         typer.echo(f"Scaffolding custom copier: {copier_url}")
-        run_copy(
+        copier.run_copy(
             src_path=copier_url,
             dst_path=output_dir,
             vcs_ref=checkout or "main",
@@ -104,7 +105,7 @@ def scaffold(
 
     if local_dir is not None:
         typer.echo(f"Scaffolding local: {cookiecutter_url}")
-        cookiecutter(
+        cookiecutter.cookiecutter(
             template=str(local_dir),
             output_dir=output_dir / "scaffolded"
             if str(output_dir) == "."

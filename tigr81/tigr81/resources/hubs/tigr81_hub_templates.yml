@@ -1,5 +1,12 @@
 name: tigr81_hub_templates
 hub_templates:
-  cookiecutter-ai-flock:
-    name: cookiecutter-ai-flock
-    template: https://github.com/LLMsLab/cookiecutter-ai-flock
+  python-project-bindings:
+    name: python-project-bindings
+    template: https://github.com/python-project-templates/base
+    checkout: main
+    template_type: copier
+  fastapi-react:
+    name: fastapi-react
+    template: https://github.com/Buuntu/fastapi-react
+    checkout: master
+    template_type: cookiecutter

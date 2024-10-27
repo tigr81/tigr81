@@ -1,4 +1,3 @@
-import os
 import pathlib as pl
 from typing import Dict, Optional, Union
 
@@ -9,35 +8,10 @@ from pydantic import BaseModel
 import tigr81.utils as tigr81_utils
 
 
-def _extract_template_name(template: str) -> str:
-    """
-    Extracts the name of the template from either a local file path or a remote URL.
-
-    For local paths, it returns the last directory or file name. For remote Git URLs,
-    it extracts the repository name from the URL by splitting on '.' and taking the first part.
-
-    Args:
-        template (str): The template location, which can be a local file path (Linux, MacOS, Windows)
-                        or a remote URL (e.g., a Git repository URL).
-
-    Returns:
-        str: The extracted template name, which is the last part of the local path or the remote URL.
-             - For local paths, it's the last folder or file name.
-             - For remote URLs, it's the last part of the URL, typically the repository name,
-               with any extensions removed.
-
-    Example:
-        - Input: "/home/user/projects/my-template" -> Output: "my-template"
-        - Input: "https://github.com/user/my-repo.git" -> Output: "my-repo"
-    """
-    path = pl.Path(template)
-    
-    if path.is_absolute() or os.path.exists(template):
-        return path.name
-    else:
-        template_name = template.rstrip("/").split("/")[-1]
-        return template_name.split(".")[0]
-
+class TemplateTypeEnum(tigr81_utils.StrEnum):
+    COOKIECUTTER = "cookiecutter"
+    COPIER = "copier"
+    RAW_GIT = "raw_git"
 
 
 class HubTemplate(BaseModel):
@@ -45,9 +19,11 @@ class HubTemplate(BaseModel):
     template: Union[str, pl.Path]
     checkout: Optional[str] = None
     directory: Optional[str] = None
+    template_type: TemplateTypeEnum
 
     def __str__(self):
         components = [
+            f"\tTemplate type: {self.template_type}",
             f"\tTemplate name: {self.name}",
             f"\tTemplate location: {self.template}",
         ]
@@ -59,9 +35,13 @@ class HubTemplate(BaseModel):
 
     @staticmethod
     def prompt() -> "HubTemplate":
+        template_type = tigr81_utils.create_interactive_prompt(
+            values=list(TemplateTypeEnum),
+            message="Select a template type",
+        )
         template = typer.prompt("Enter the template location (git repo, local)")
 
-        hub_template_name = _extract_template_name(template)
+        hub_template_name = tigr81_utils.extract_template_name(template)
         hub_template_name = typer.prompt(
             "Enter the template name", default=hub_template_name
         )
@@ -84,6 +64,7 @@ class HubTemplate(BaseModel):
             template=template,
             checkout=checkout,
             directory=directory,
+            template_type=template_type,
         )
 
 
