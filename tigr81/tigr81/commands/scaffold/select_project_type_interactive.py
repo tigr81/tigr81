@@ -11,5 +11,4 @@ def select_project_type_interactive() -> ProjectTypeEnum:
         values=list(ProjectTypeEnum),
         icon_mapping=ICON_MAPPING,
         message="Select the project type to scaffold",
-        display_transform=lambda pt: pt.name.replace("_", " ").title()  # Transform name for display
     )
