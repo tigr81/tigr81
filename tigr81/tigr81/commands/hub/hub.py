@@ -36,7 +36,7 @@ def callback():
 
 @app.command()
 def add():
-    """Add a new hub templates"""
+    """Add a new hub templates."""
     hub = Hub.prompt()
 
     if not is_hub_name_valid(hub.name):
@@ -53,7 +53,7 @@ def list(
         str, typer.Argument(help="The name of the hub to list")
     ] = "all",
 ):
-    """List all hub templates"""
+    """List all hub templates."""
     hubs = load_hubs()
     if hub_name == "all":
         typer.echo("Your hub templates are:")
@@ -79,7 +79,7 @@ def remove(
     ),
     hub_name: Annotated[str, typer.Argument(help="The name of the hub")] = None,
 ):
-    """Remove a hub or a hub template based on user choice"""
+    """Remove a hub or a hub template based on user choice."""
     hubs = load_hubs([USER_HUB_LOCATION])
 
     if len(hubs) == 0:

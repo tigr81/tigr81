@@ -130,9 +130,3 @@ class Manifest(BaseModel):
                 default_flow_style=False,
                 sort_keys=False,
             )
-
-
-if __name__ == "__main__":
-    m = Manifest.prompt()
-
-    print(m)

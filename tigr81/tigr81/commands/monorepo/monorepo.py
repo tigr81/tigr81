@@ -42,7 +42,7 @@ def add():
 
 @app.command()
 def draw():
-    """Generate the .png representation of the monorepo pkd dependencies"""
+    """Generate the .png representation of the monorepo pkd dependencies."""
     manifest_dct = tigr81_utils.read_yaml(MANIFEST_FILE_NAME)
     manifest = Manifest(**manifest_dct)
     mf_digraph = manifest.to_graphviz_digraph()
@@ -52,7 +52,7 @@ def draw():
 
 @app.command()
 def clean():
-    """Delete all resources related to the current monorepo"""
+    """Delete all resources related to the current monorepo."""
     typer.echo("Cleaning monorepo project")
     manifest_dct = tigr81_utils.read_yaml(MANIFEST_FILE_NAME)
     manifest = Manifest(**manifest_dct)
@@ -90,7 +90,7 @@ def clean():
 
 @app.command()
 def init():
-    """Initialize a monorepo project"""
+    """Initialize a monorepo project."""
     typer.echo("Inizializing a monorepo project")
 
     manifest_path = pl.Path(MANIFEST_FILE_NAME)
@@ -110,7 +110,7 @@ def init():
 
 @app.command()
 def install():
-    """Install every component inside the monorepo project"""
+    """Install every component inside the monorepo project."""
     typer.echo("Installing all the components of the monorepo project")
 
     pc = PoetryPM()
