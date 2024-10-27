@@ -1,7 +1,6 @@
 import pathlib as pl
 import shutil
 import subprocess
-import tempfile
 from typing import Tuple
 
 import typer
@@ -65,37 +64,6 @@ def get_author_info() -> Tuple[str, str]:
     author_name = author_email.split("@")[0]
 
     return author_name, author_email
-
-
-def is_cookiecutter_template(
-    repo_url: str, checkout: str = None, directory: pl.Path = None
-) -> bool:
-    """Checks if the specified repository contains a cookiecutter template.
-
-    Args:
-        repo_url (str): The URL of the Git repository.
-        checkout (str): The branch or tag to checkout. Defaults to "main".
-        directory (str): The directory to check within the repo. Defaults to root (".").
-
-    Returns:
-        bool: True if the repository contains a cookiecutter.json file, False otherwise.
-    """
-    # Ensure the directory path doesn't start with a leading slash (should be relative to repo root)
-    directory = pl.Path(directory)
-    checkout = checkout or "main"
-
-    # Create a temporary directory to clone the repository
-    with tempfile.TemporaryDirectory() as temp_dir:
-        output_dir = pl.Path(temp_dir)
-
-        # Clone the specified directory from the repo
-        clone_repo_directory(repo_url, checkout, directory, output_dir)
-
-        # Path to check for the cookiecutter.json file
-        cookiecutter_file = output_dir / directory / "cookiecutter.json"
-
-        # Return whether the file exists
-        return cookiecutter_file.exists()
 
 
 def clone_repo_directory(
