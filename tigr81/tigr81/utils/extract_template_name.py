@@ -36,7 +36,7 @@ def extract_template_name(template: str) -> str:
     if not os.path.exists(template):
         raise ValueError("The input must be an existing directory.")
 
-    if not os.path.isdir(template):
+    if os.path.isdir(template):
         return path.name
 
     raise ValueError(

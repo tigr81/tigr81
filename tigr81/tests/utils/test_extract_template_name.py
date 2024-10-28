@@ -6,8 +6,6 @@ import tigr81.utils as tigr81_utils
 @pytest.mark.parametrize(
     "template, expected",
     [
-        # Test using the temporary local path
-        (pytest.lazy_fixture("temp_local_path"), "my-template"),
         # URLs with various structures
         ("https://github.com/user/my-repo.git", "my-repo"),
         ("https://github.com/user/my-repo/", "my-repo"),
@@ -18,14 +16,22 @@ import tigr81.utils as tigr81_utils
         ("https://github.com/user/.hidden-repo.git", "hidden-repo"),
     ],
 )
-def test_extract_template_name(template, expected):
-    """Test that extract_template_name returns the correct name for various types of paths and URLs."""
+def test_extract_template_name_given_url(template, expected):
+    """Test that extract_template_name returns the correct name for various types of URLs."""
     assert tigr81_utils.extract_template_name(template) == expected
+
+
+def test_extract_template_name_path(tmp_path):
+    """Test that extract_template_name returns the correct name for an existing directory."""
+    tmp_dir = tmp_path / "test"
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    assert tigr81_utils.extract_template_name(str(tmp_dir)) == "test"
 
 
 @pytest.mark.parametrize(
     "invalid_template",
     [
+        pytest.lazy_fixture("temp_local_path"),
         "/non/existent/path",  # Non-existent local path
         "invalid_url_format",  # Invalid URL format
         "ftp://github.com/user/repo",  # Unsupported URL protocol
