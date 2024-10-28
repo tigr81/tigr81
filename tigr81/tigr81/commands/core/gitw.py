@@ -97,23 +97,3 @@ def clone_repo_directory(
     git_dir = output_dir / ".git"
     assert git_dir.exists() or git_dir.is_dir()
     shutil.rmtree(git_dir)
-
-
-if __name__ == "__main__":
-    # Test with a known Cookiecutter repository
-    # s = is_cookiecutter_template(
-    #     repo_url="https://github.com/drivendataorg/cookiecutter-data-science",
-    #     checkout="master",
-    #     directory="."
-    # )
-    # print(s)
-    # clone_repo_directory(
-    #     repo_url="https://github.com/primefaces/primereact-examples",
-    #     checkout="main",
-    #     directory=pl.Path("astro-basic-ts"),
-    #     # directory=pl.Path("."),
-    #     output_dir=pl.Path("dev"),
-    # )
-
-    latest_tag = get_latest_tag(repo_url="https://github.com/tigr81/prime-react")
-    print(latest_tag)
