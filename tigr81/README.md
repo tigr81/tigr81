@@ -1,34 +1,76 @@
-# TODO
+<div align="center">
+  <img src="./assets/5142438-cute-baby-tigre-vettoriale.jpg" width=400 style="border-radius: 50%; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"/>
+  <h1 style="font-size: 4em; color: #ff6f00; text-shadow: 2px 2px 4px #000000;">🐯tigr81</h1>
+  <p style="font-size: 1.5em; color: #4a4a4a;">A Project Scaffolder for HUMANS. My name is tigr81 that can be read as "tigr-ottone" more user-friendly for Italian developers.</p>
+</div>
 
-- [X] tigr81 commands refactoring
-- [X] scaffold react
-- [X] add linter formatter ecc script from templates
-- [] input: framework - prime react or mui  
-- [] MUI template
-- [X] prime react template
-- [X] fastapi better
-- [X] OK -> add __main__
-- [X] OK -> pydantic settings
-- [] ruff and dev deps
-- [] - script/commands to run in project lifecycle
-- [] fastapi auth provider: api key, oauth,..
-- [] config modules pydantic
-- [] model config commons config camel case
-- [] lifespan
-- [] logging as json
+## 🚀 What is tigr81?
 
-- [] fastapi: Dockerfile
-- [X] python templates: ruff + code linting setup
-- [] monorepo: add just dependency
-- [] monorepo: delete dependencies already present when add
+Tigr81 is a powerful and user-friendly project scaffolder that empowers you to kickstart your projects with just a single command. Designed with simplicity and ease of use in mind, tigr81 is the perfect companion for developers looking to streamline their project setup process. Currently, tigr81 supports three types of projects:
 
-- [] add also copier template generator
+- 🌐 fastapi
+- 📦 poetry_pkg
+- ⚛️ prime-react
+- 🔜 more is coming soon!
 
-## New Templates in road map
+## 📥 How to install tigr81?
 
-- [] typer cli template
-- [] Google Cloud Funtion python pkg
-- [] Azure Function python pkg
-- [] full stack: chatbot template RAG opensource
-- [] fastapi with sqlalchemy templates
-- [] full stack: react + fastapi + sqlalchemy
+Installing tigr81 is a breeze! Simply use pip, the Python package installer, and run the following command:
+
+```bash
+pip install tigr81
+```
+
+And voila! You're ready to embark on your project scaffolding journey with tigr81.
+
+## 🤔 How to use tigr81?
+
+To discover the full potential of tigr81 and learn how to harness its capabilities, simply run the following command:
+
+```bash
+tigr81 --help
+```
+
+This command will provide you with a comprehensive guide on how to utilize tigr81 effectively.
+
+## 🌟 How to create a new project?
+
+Creating a new project with tigr81 is as easy as 1, 2, 3! Just run the following command:
+
+```bash
+tigr81 scaffold <project_type>
+```
+
+Replace `<project_type>` with the desired project type from the available options (fastapi, poetry_pkg, prime-react).
+
+For example, to create a new FastAPI project, simply execute:
+
+```bash
+tigr81 scaffold fastapi
+```
+
+Follow the interactive prompts, and tigr81 will guide you through the process of setting up your project effortlessly.
+
+---
+
+<div align="center">
+  <p style="font-size: 1.2em; color: #4a4a4a;">Start your projects with ease using tigr81 - the project scaffolder that roars with simplicity and power! 🐯💪</p>
+</div>
+
+## 🚀 How to Deploy a New Version of tigr81?
+
+Deploying a new version of tigr81 is streamlined through a structured workflow to ensure stability and ease of deployment. Follow these steps:
+
+1. **Open a Feature Branch**: Begin by creating a new branch from `develop` for your new feature or fix:
+
+   ```bash
+   git checkout develop
+   git checkout -b feat/<your-feature-name>
+   ```
+
+2. Implement Your Changes: Add, commit, and push your changes to your feature branch.
+3. Create a Pull Request (PR) to develop:
+    - Open a PR targeting the develop branch.
+    - Include relevant information in the PR description to help reviewers understand your changes.
+4. Run the CI/CD Workflow Manually: Once your PR is merged into develop, manually trigger the CI/CD workflow to deploy the new version.
+5. Monitor the Deployment: After initiating the workflow, monitor its progress to ensure successful deployment.
