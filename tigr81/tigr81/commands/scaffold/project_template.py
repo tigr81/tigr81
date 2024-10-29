@@ -151,7 +151,3 @@ class ProjectTemplate(BaseModel):
             project_options=project_options,
             dependencies=dependencies,
         )
-
-
-if __name__ == "__main__":
-    pt = ProjectTemplate.prompt()
