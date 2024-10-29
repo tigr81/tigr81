@@ -3,7 +3,7 @@ name = "tigr81"
 version = "1.2.0"
 description = ""
 authors = ["Giuseppe Ambrosio <giuambro97@gmail.com>"]
-readme = "../README.md"
+readme = "README.md"
 
 [tool.poetry.scripts]
 tigr81 = "tigr81.main:app"
