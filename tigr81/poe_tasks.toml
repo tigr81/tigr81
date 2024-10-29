@@ -1,0 +1,13 @@
+[tasks]
+
+# Task for formatting code using ruff
+format = { cmd = "ruff check . --fix" }
+
+# Task for checking code style using ruff
+check = { cmd = "ruff check ." }
+
+# Task for running tests with pytest
+test = { cmd = "pytest tests" }
+
+# Task for running tests with coverage report
+coverage = { cmd = "pytest tests --cov-report html --cov=tigr81" }

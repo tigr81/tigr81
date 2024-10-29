@@ -7,25 +7,23 @@ import typer
 from pydantic import BaseModel
 
 import tigr81.commands.core.scaffold as scaffold_core
+import tigr81.utils as tigr81_utils
 from tigr81.commands.core.poetry_pm import PoetryPM
 from tigr81.commands.monorepo.constants import MANIFEST_FILE_NAME
 from tigr81.commands.monorepo.manifest import Manifest
 from tigr81.commands.scaffold.project_template import ProjectTemplate
-import tigr81.utils as tigr81_utils
 
 app = typer.Typer()
 
 
 @app.callback()
 def callback():
-    """
-    Handle monorepo project
-    """
+    """Handle monorepo project."""
 
 
 @app.command()
 def add():
-    """Add a component to the monorepo project"""
+    """Add a component to the monorepo project."""
     typer.echo("Adding a component to the monorepo project")
 
     manifest_dct = tigr81_utils.read_yaml(MANIFEST_FILE_NAME)
@@ -44,7 +42,7 @@ def add():
 
 @app.command()
 def draw():
-    """Generate the .png representation of the monorepo pkd dependencies"""
+    """Generate the .png representation of the monorepo pkd dependencies."""
     manifest_dct = tigr81_utils.read_yaml(MANIFEST_FILE_NAME)
     manifest = Manifest(**manifest_dct)
     mf_digraph = manifest.to_graphviz_digraph()
@@ -54,7 +52,7 @@ def draw():
 
 @app.command()
 def clean():
-    """Delete all resources related to the current monorepo"""
+    """Delete all resources related to the current monorepo."""
     typer.echo("Cleaning monorepo project")
     manifest_dct = tigr81_utils.read_yaml(MANIFEST_FILE_NAME)
     manifest = Manifest(**manifest_dct)
@@ -92,7 +90,7 @@ def clean():
 
 @app.command()
 def init():
-    """Initialize a monorepo project"""
+    """Initialize a monorepo project."""
     typer.echo("Inizializing a monorepo project")
 
     manifest_path = pl.Path(MANIFEST_FILE_NAME)
@@ -112,7 +110,7 @@ def init():
 
 @app.command()
 def install():
-    """Install every component inside the monorepo project"""
+    """Install every component inside the monorepo project."""
     typer.echo("Installing all the components of the monorepo project")
 
     pc = PoetryPM()
@@ -131,7 +129,7 @@ def install():
 
 @app.command()
 def remove():
-    """Remove a component from the monorepo project"""
+    """Remove a component from the monorepo project."""
     manifest_dct = tigr81_utils.read_yaml(MANIFEST_FILE_NAME)
 
     manifest = Manifest(**manifest_dct)
@@ -152,7 +150,7 @@ def remove():
 
 @app.command()
 def scaffold():
-    """Scaffold a monorepo project"""
+    """Scaffold a monorepo project."""
     # TODO: check if the file exists and add a method from_yaml in Manifest
     try:
         manifest_dct = tigr81_utils.read_yaml(MANIFEST_FILE_NAME)
@@ -208,8 +206,7 @@ def prompt_for_model(model_type: BaseModel) -> BaseModel:
                 input_data[field_name].append(item)
                 if typer.confirm("Add another item? (y/n)", default=True):
                     continue
-                else:
-                    break
+                break
         elif issubclass(field_info, Dict):
             key_type, value_type = field_info.__args__
             input_data[field_name] = {}
@@ -219,8 +216,7 @@ def prompt_for_model(model_type: BaseModel) -> BaseModel:
                 input_data[field_name][key] = value
                 if typer.confirm("Add another item? (y/n)", default=True):
                     continue
-                else:
-                    break
+                break
         else:
             default_value = (
                 field_info.default if hasattr(field_info, "default") else None

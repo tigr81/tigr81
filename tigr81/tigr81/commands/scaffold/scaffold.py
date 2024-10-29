@@ -7,13 +7,8 @@ import typer
 from typing_extensions import Annotated
 
 import tigr81.commands.core.scaffold as scaffold_core
-from tigr81 import LOCAL_REPO_LOCATION, REPO_LOCATION
-from tigr81.cli_settings import CLI_SETTINGS
 from tigr81.commands.core import gitw
 from tigr81.commands.scaffold.project_template import (
-    Dependency,
-    ProjectTemplate,
-    ProjectTemplateOptions,
     ProjectTypeEnum,
 )
 from tigr81.commands.scaffold.select_project_type_interactive import (
@@ -60,10 +55,11 @@ def scaffold(
         help="Specify the url of a git repo you want to scaffold",
     ),
     directory: Optional[pl.Path] = typer.Option(
-        None, help="Specify a relative path to a directory (for git_url and cookiecutter_url scaffolding templates)"
+        None,
+        help="Specify a relative path to a directory (for git_url and cookiecutter_url scaffolding templates)",
     ),
 ):
-    """Scaffold a project template"""
+    """Scaffold a project template."""
     if copier_url is not None:
         typer.echo(f"Scaffolding custom copier: {copier_url}")
         copier.run_copy(
@@ -72,8 +68,7 @@ def scaffold(
             vcs_ref=checkout or "main",
             defaults=default,
         )
-        return 
-
+        return
 
     if cookiecutter_url is not None:
         typer.echo(f"Scaffolding custom cookiecutter: {cookiecutter_url}")
@@ -82,10 +77,10 @@ def scaffold(
             output_dir=output_dir,
             directory=directory or ".",
             no_input=default,
-            checkout=checkout or "main" ,
+            checkout=checkout or "main",
         )
         return
-    
+
     if git_url is not None:
         typer.echo(f"Scaffolding clone repo: {cookiecutter_url}")
         gitw.clone_repo_directory(
@@ -134,42 +129,3 @@ def scaffold(
             output_dir=output_dir,
             checkout=checkout,
         )
-
-
-if __name__ == "__main__":
-    project_type = "fastapi"
-    PROJECT_TEMPLATE_LOCATION = REPO_LOCATION
-    checkout = "develop"
-
-    if CLI_SETTINGS.tigr81_environment == "local":
-        PROJECT_TEMPLATE_LOCATION = LOCAL_REPO_LOCATION.as_posix()
-        checkout = None
-
-    typer.echo(
-        f"Scaffolding a {project_type} project template from {PROJECT_TEMPLATE_LOCATION}"
-    )
-
-    project_template = ProjectTemplate(
-        project_type=project_type,
-        project_options=ProjectTemplateOptions(
-            name=project_type,
-            package_name=project_type,
-            description=project_type,
-        ),
-        dependencies=[
-            Dependency(name="dagprep", relative_path="../../dagprep"),
-            Dependency(name="fresko", relative_path="../../fresko"),
-        ],
-    )
-
-    print(project_template.extra_content)
-
-    cookiecutter(
-        template=PROJECT_TEMPLATE_LOCATION,
-        output_dir=".",
-        no_input=True,
-        # extra_context=project_template.project_options.model_dump(),
-        extra_context=project_template.extra_content,
-        checkout=checkout,
-        directory=f"project_templates/{project_template.project_type}",
-    )

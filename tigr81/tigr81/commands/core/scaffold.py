@@ -1,14 +1,15 @@
+import pathlib as pl
 from typing import List
 
 import typer
 from cookiecutter.main import cookiecutter
+
+import tigr81.commands.core.gitw as gitw
 from tigr81.commands.scaffold.project_template import (
     ProjectTemplate,
     ProjectTemplateOptions,
     ProjectTypeEnum,
 )
-import pathlib as pl
-import tigr81.commands.core.gitw as gitw
 
 
 def scaffold_project_type(
@@ -27,7 +28,9 @@ def scaffold_project_type(
         ),
     )
 
-    scaffold_project_template(project_template, default=default, output_dir=output_dir, checkout=checkout)
+    scaffold_project_template(
+        project_template, default=default, output_dir=output_dir, checkout=checkout
+    )
 
 
 def scaffold_project_template(
@@ -57,12 +60,13 @@ def scaffold_project_template(
 
 
 def scaffold_cookiecutter(
-    project_type: ProjectTypeEnum, default: bool = False, output_dir: pl.Path = pl.Path("."), checkout: str = "main",
+    project_type: ProjectTypeEnum,
+    default: bool = False,
+    output_dir: pl.Path = pl.Path("."),
+    checkout: str = "main",
 ):
     template = project_type.project_location
-    typer.echo(
-        f"Scaffolding a {project_type} project template from {template}"
-    )
+    typer.echo(f"Scaffolding a {project_type} project template from {template}")
     cookiecutter(
         template=template,
         output_dir=output_dir,
@@ -70,7 +74,6 @@ def scaffold_cookiecutter(
         checkout=checkout,
         directory=str(project_type),
     )
-
 
 
 def scaffold_monorepo(components: List[ProjectTemplate]):

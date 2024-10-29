@@ -1,6 +1,7 @@
-import pytest
-import tempfile
 import pathlib as pl
+import tempfile
+
+import pytest
 
 
 @pytest.fixture

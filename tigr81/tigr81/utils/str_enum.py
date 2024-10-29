@@ -13,10 +13,10 @@ class StrEnum(str, enum.Enum):
             RED = "red"
             GREEN = "green"
             BLUE = "blue"
-    
+
         print(Color.RED)  # Output: red
     """
-    
+
     def __repr__(self) -> str:
         """Return the string representation of the enum member."""
         return self.value
@@ -24,4 +24,3 @@ class StrEnum(str, enum.Enum):
     def __str__(self) -> str:
         """Return the string representation of the enum member."""
         return self.value
-
