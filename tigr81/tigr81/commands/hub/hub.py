@@ -43,7 +43,7 @@ def add():
         typer.echo(
             f"The hub name {hub.name} is not valid. Already present hub with this name."
         )
-        raise typer.Exit()
+        raise typer.Exit(1)
     hub.to_yaml(USER_HUB_LOCATION)
 
 

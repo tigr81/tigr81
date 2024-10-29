@@ -19,7 +19,7 @@ def test_load_hubs_no_hubs(mock_hub_folders):
     assert len(hubs) == 0
 
 
-def test_load_hubs_fake_hubs(mocker, mock_hub_folders):
+def test_load_hubs_fake_hubs(mocker: MockerFixture, mock_hub_folders):
     """Test load hubs with fake hubs."""
     hub_file = mock_hub_folders[0] / "empty.yml"
     hub_file.touch()

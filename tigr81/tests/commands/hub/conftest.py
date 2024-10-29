@@ -1,5 +1,7 @@
 import pytest
 
+from tigr81.commands.hub.models import HubTemplate, TemplateTypeEnum
+
 
 @pytest.fixture
 def mock_hub_folders(tmp_path):
@@ -20,3 +22,14 @@ def mock_hub_data():
         "valid_hub_1": "Hub1 Details",
         "valid_hub_2": "Hub2 Details",
     }
+
+@pytest.fixture
+def mock_hub_template():
+    """Mock HubTemplate."""
+    return HubTemplate(
+        name="example-template",
+        template="http://example.com/template-repo.git",
+        checkout="main",
+        directory="subfolder",
+        template_type=TemplateTypeEnum.COOKIECUTTER,
+    )

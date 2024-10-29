@@ -1,8 +1,13 @@
+import pathlib as pl
 import subprocess
 
 from pytest_mock import MockerFixture
 
-from tigr81.commands.core.gitw import get_latest_tag, get_author_info
+from tigr81.commands.core.gitw import (
+    clone_repo_directory,
+    get_author_info,
+    get_latest_tag,
+)
 
 """
 Unit tests for get_latest_tag
@@ -46,3 +51,63 @@ def test_get_author_info(mocker: MockerFixture):
     mocker.patch("subprocess.run", return_value=result)
     author_name, author_email = get_author_info()
     assert (author_name, author_email) == ("giuambro", "giuambro@gmail.com")
+
+
+"""
+Unit tests for clone_repo_directory
+"""
+
+def test_clone_directory_entire_repo(mocker: MockerFixture, mock_repo_url, mock_folders):
+    """Test clone_directory for an entire repo."""
+    checkout = ""
+    directory = pl.Path(".")
+    output_dir = mock_folders[0]
+
+    git_dir = output_dir / ".git"
+    git_dir.mkdir()
+
+    mock_spr = mocker.patch("subprocess.run")
+    clone_repo_directory(
+        repo_url=mock_repo_url,
+        checkout=checkout,
+        directory=directory,
+        output_dir=output_dir
+    )
+    mock_spr.assert_any_call(
+        ["git", "clone", "--no-checkout", mock_repo_url, str(output_dir)], check=True
+    )
+    mock_spr.assert_any_call(
+        ["git", "-C", str(output_dir), "checkout", "main"], check=True
+    )
+
+
+
+def test_clone_directory_sub_repo(mocker: MockerFixture, mock_repo_url, mock_folders):
+    """Test clone_directory for a folder of a repo."""
+    checkout = ""
+    directory = mock_folders[0]
+    output_dir = mock_folders[1]
+
+    git_dir = output_dir / ".git"
+    git_dir.mkdir()
+
+    sparse_checkout_file = git_dir / "info" / "sparse-checkout"
+    sparse_checkout_file.parent.mkdir(parents=True, exist_ok=True)
+    sparse_checkout_file.touch()
+    
+    mock_spr = mocker.patch("subprocess.run")
+    clone_repo_directory(
+        repo_url=mock_repo_url,
+        checkout=checkout,
+        directory=directory,
+        output_dir=output_dir
+    )
+    mock_spr.assert_any_call(
+        ["git", "clone", "--no-checkout", mock_repo_url, str(output_dir)], check=True
+    )
+    mock_spr.assert_any_call(
+        ["git", "-C", str(output_dir), "config", "core.sparseCheckout", "true"], check=True
+    )
+    mock_spr.assert_any_call(
+        ["git", "-C", str(output_dir), "checkout", "main"], check=True
+    )

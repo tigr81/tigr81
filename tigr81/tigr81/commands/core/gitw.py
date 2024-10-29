@@ -82,7 +82,7 @@ def clone_repo_directory(
     )
 
     # If directory is not ".", use sparse checkout
-    if directory != pl.Path("."):
+    if str(directory) != ".":
         sparse_checkout_path = output_dir / ".git" / "info" / "sparse-checkout"
         sparse_checkout_path.write_text(f"{directory}\n")
 
