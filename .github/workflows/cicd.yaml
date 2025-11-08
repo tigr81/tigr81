@@ -22,21 +22,23 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python }}
 
-    - name: Install Poetry
-      run: pip install poetry
-
-    - name: Install dependency
+    - name: Install dependencies
       working-directory: ./tigr81
-      run: poetry install --with test
+      run: uv sync --extra test
 
     - name: Run tests
       working-directory: ./tigr81
-      run: poetry run pytest
+      run: uv run pytest
      
   publish:
     needs: [test]
@@ -46,19 +48,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
 
-      - name: Install Poetry
-        run: pip install poetry
-
-      - name: Config pypi
-        env:
-          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        run: poetry config pypi-token.pypi $PYPI_API_TOKEN
-
-      - name: Publishing package
+      - name: Build package
         working-directory: ./tigr81
-        run: poetry publish --build
+        run: uv build
+
+      - name: Publish package
+        working-directory: ./tigr81
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: uv publish --token $UV_PUBLISH_TOKEN
