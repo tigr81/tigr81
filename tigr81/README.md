@@ -70,7 +70,7 @@ Deploying a new version of tigr81 is streamlined through a structured workflow t
 
 2. Implement Your Changes: Add, commit, and push your changes to your feature branch.
 3. Create a Pull Request (PR) to develop:
-    - Open a PR targeting the develop branch.
-    - Include relevant information in the PR description to help reviewers understand your changes.
+   - Open a PR targeting the develop branch.
+   - Include relevant information in the PR description to help reviewers understand your changes.
 4. Run the CI/CD Workflow Manually: Once your PR is merged into develop, manually trigger the CI/CD workflow to deploy the new version.
 5. Monitor the Deployment: After initiating the workflow, monitor its progress to ensure successful deployment.
