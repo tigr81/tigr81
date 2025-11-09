@@ -48,7 +48,7 @@ def add():
 
 
 @app.command()
-def list(
+def list(  # noqa: A001
     hub_name: Annotated[
         str, typer.Argument(help="The name of the hub to list")
     ] = "all",
@@ -72,9 +72,9 @@ def list(
 @app.command()
 def remove(
     delete_template: bool = typer.Option(
-        False,
         "--template",
         "-t",
+        default=False,
         help="Delete a template inside a hub instead of the entire hub",
     ),
     hub_name: Annotated[str, typer.Argument(help="The name of the hub")] = None,
@@ -106,7 +106,7 @@ def remove(
 
         hub_template_name_to_delete = tigr81_utils.create_interactive_prompt(
             values=[_name for _name in selected_hub.hub_templates.keys()],
-            message=f"Select a template from the hub '{hub_name}' to delete",
+            message=f"Select a template from the hub '{hub_name}' to delete",  # noqa: S608
         )
 
         typer.echo(f"Deleting hub template '{hub_template_name_to_delete}'...")
@@ -141,7 +141,7 @@ def scaffold(
         help="Set if you want to scaffold the project template in a specific directory",
     ),
     default: bool = typer.Option(
-        False, help="Set to False to enable input during cookiecutter execution"
+        default=False, help="Set to False to enable input during cookiecutter execution"
     ),
 ):
     """Scaffold a template from an existing hub templates."""
@@ -161,7 +161,7 @@ def scaffold(
     if not template_name:
         template_name = tigr81_utils.create_interactive_prompt(
             values=[_name for _name in selected_hub.hub_templates.keys()],
-            message=f"Select a template from the hub '{hub_name}'",
+            message=f"Select a template from the hub '{hub_name}'",  # noqa: S608
         )
 
     hub_template = selected_hub.hub_templates.get(template_name)

@@ -20,36 +20,36 @@ def scaffold(
     project_type: Annotated[
         ProjectTypeEnum, typer.Argument(help="The project type to scaffold")
     ] = None,
-    default: bool = typer.Option(
-        False, help="Set to False to enable input during cookiecutter execution"
+    default: Optional[bool] = typer.Option(
+        default=False, help="Set to False to enable input during cookiecutter execution"
     ),
     output_dir: pl.Path = typer.Option(
-        pl.Path("."),
+        default=pl.Path("."),
         help="Set if you want to scaffold the project template in a specific directory",
     ),
-    dev: bool = typer.Option(
-        False,
+    dev: Optional[bool] = typer.Option(
+        default=False,
         help="Set this flag to use the default local directory based on project type",
     ),
     local_dir: Optional[pl.Path] = typer.Option(
-        None, help="Specify a local folder for the template"
+        default=None, help="Specify a local folder for the template"
     ),
-    checkout: str = typer.Option(
-        None, help="Specify the branch for non-local scaffolding (default: latest tag)"
+    checkout: Optional[str] = typer.Option(
+        default=None, help="Specify the branch for non-local scaffolding (default: latest tag)"
     ),
-    cookiecutter_url: str = typer.Option(
+    cookiecutter_url: Optional[str] = typer.Option(
         None,
         "--cookiecutter-url",
         "--ck-url",
         help="Specify the url or path (for local scaffolding) of a cookiecutter project template",
     ),
-    copier_url: str = typer.Option(
+    copier_url: Optional[str] = typer.Option(
         None,
         "--copier-url",
         "--cp-url",
         help="Specify the url or path (for local scaffolding) of a copier project template",
     ),
-    git_url: str = typer.Option(
+    git_url: Optional[str] = typer.Option(
         None,
         "--git-url",
         help="Specify the url of a git repo you want to scaffold",

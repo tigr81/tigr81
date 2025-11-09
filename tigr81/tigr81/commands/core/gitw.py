@@ -21,8 +21,8 @@ def get_latest_tag(repo_url: str) -> str:
     """
     try:
         # Fetch tags from the remote repository
-        result = subprocess.run(
-            ["git", "ls-remote", "--tags", repo_url],
+        result = subprocess.run(  # noqa: S603
+            ["git", "ls-remote", "--tags", repo_url],  # noqa: S607
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
@@ -56,8 +56,8 @@ def get_author_info() -> Tuple[str, str]:
         Tuple[str, str]: A tuple containing the author's name and email.
     """
     # Get the author's email from Git config
-    author_email = subprocess.run(
-        ["git", "config", "user.email"], capture_output=True, text=True, check=True
+    author_email = subprocess.run(  # noqa: S603
+        ["git", "config", "user.email"], capture_output=True, text=True, check=True  # noqa: S607
     ).stdout.strip()
 
     # Extract the author's name from the email
@@ -77,8 +77,8 @@ def clone_repo_directory(
         output_dir_str = str(output_dir)
 
     # Clone the repository without checking out files
-    subprocess.run(
-        ["git", "clone", "--no-checkout", repo_url, output_dir_str], check=True
+    subprocess.run(  # noqa: S603
+        ["git", "clone", "--no-checkout", repo_url, output_dir_str], check=True  # noqa: S607
     )
 
     # If directory is not ".", use sparse checkout
@@ -86,14 +86,17 @@ def clone_repo_directory(
         sparse_checkout_path = output_dir / ".git" / "info" / "sparse-checkout"
         sparse_checkout_path.write_text(f"{directory}\n")
 
-        subprocess.run(
-            ["git", "-C", output_dir_str, "config", "core.sparseCheckout", "true"],
+        subprocess.run(  # noqa: S603
+            ["git", "-C", output_dir_str, "config", "core.sparseCheckout", "true"],  # noqa: S607
             check=True,
         )
 
     # Checkout the specified branch
-    subprocess.run(["git", "-C", output_dir_str, "checkout", checkout], check=True)
+    subprocess.run(  # noqa: S603
+        ["git", "-C", output_dir_str, "checkout", checkout], check=True  # noqa: S607
+    )
 
     git_dir = output_dir / ".git"
-    assert git_dir.exists() or git_dir.is_dir()
+    if not (git_dir.exists() or git_dir.is_dir()):
+        raise ValueError(f"Git directory {git_dir} does not exist or is not a directory")
     shutil.rmtree(git_dir)

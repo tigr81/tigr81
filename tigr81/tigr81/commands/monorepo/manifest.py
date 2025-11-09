@@ -19,12 +19,32 @@ from tigr81.commands.scaffold.project_template import ProjectTemplate, ProjectTy
 
 
 class Manifest(BaseModel):
+    """Manifest model representing a monorepo configuration.
+
+    Attributes:
+        name: The name of the monorepo project.
+        relative_path: The relative path where the monorepo source code is located.
+        description: Description of the monorepo project.
+        components: List of project templates/components in the monorepo.
+    """
+
     name: Optional[str] = MANIFEST_DEFAULT_NAME
     relative_path: Optional[pl.Path] = MANIFEST_DEFAULT_RELATIVE_PATH
     description: Optional[str] = MANIFEST_DEFAULT_DESCRIPTION
     components: Optional[List[ProjectTemplate]] = []
 
     def remove(self, component_name: str) -> ProjectTemplate:
+        """Remove a component from the manifest.
+
+        Args:
+            component_name: The name of the component to remove.
+
+        Returns:
+            The removed ProjectTemplate.
+
+        Raises:
+            ValueError: If the component is not found in the manifest.
+        """
         component_to_remove = None
         # find the component to delete
         for component in self.components:
@@ -76,9 +96,15 @@ class Manifest(BaseModel):
             )
             typer.echo(f"Component {component_name} removed successfully")
             return component_to_remove
+        raise typer.Exit("Component removal cancelled by user.")
 
     @classmethod
     def prompt(cls) -> "Manifest":
+        """Interactively prompt the user to create a Manifest.
+
+        Returns:
+            A new Manifest instance created from user input.
+        """
         name = typer.prompt(
             "Enter a name for the monorepo project", default=MANIFEST_DEFAULT_NAME
         )
@@ -103,6 +129,11 @@ class Manifest(BaseModel):
         )
 
     def to_graphviz_digraph(self) -> Digraph:
+        """Convert the manifest to a Graphviz Digraph representation.
+
+        Returns:
+            A Digraph object representing the component dependencies.
+        """
         dg = Digraph(name=self.name, filename=self.name, format="png")
 
         for component in self.components:
@@ -123,6 +154,11 @@ class Manifest(BaseModel):
         return dg
 
     def to_yaml(self, file_name: str = MANIFEST_FILE_NAME) -> None:
+        """Serialize the manifest to a YAML file.
+
+        Args:
+            file_name: The name of the YAML file to write to.
+        """
         with open(file_name, "w") as f:
             yaml.dump(
                 data=self.model_dump(mode="json"),

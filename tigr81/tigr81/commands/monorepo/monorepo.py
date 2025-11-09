@@ -158,7 +158,7 @@ def scaffold():
         typer.echo(
             "Manifest not found.. make sure you are in the correct folder or if you want to create a new one run: tigr81 monorepo init"
         )
-        raise typer.Exit()
+        raise typer.Exit() from None
 
     manifest = Manifest(**manifest_dct)
 
@@ -194,6 +194,14 @@ def scaffold():
 
 # Define a function to interactively prompt the user for input for a Pydantic BaseModel
 def prompt_for_model(model_type: BaseModel) -> BaseModel:
+    """Interactively prompt the user for input to create a Pydantic BaseModel instance.
+
+    Args:
+        model_type: The BaseModel class to instantiate.
+
+    Returns:
+        A new instance of the model_type created from user input.
+    """
     input_data = {}
     for field_name, field_info in model_type.model_fields.items():
         if issubclass(field_info, BaseModel):

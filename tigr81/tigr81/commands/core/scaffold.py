@@ -18,6 +18,14 @@ def scaffold_project_type(
     output_dir: pl.Path = pl.Path("."),
     checkout: str = "main",
 ):
+    """Scaffold a project based on the project type.
+
+    Args:
+        project_type: The type of project to scaffold.
+        default: Whether to use default values without prompting.
+        output_dir: The directory where the project will be created.
+        checkout: The git branch or tag to checkout.
+    """
     author_name, author_email = gitw.get_author_info()
 
     project_template = ProjectTemplate(
@@ -39,6 +47,14 @@ def scaffold_project_template(
     output_dir: pl.Path = pl.Path("."),
     checkout: str = "main",
 ):
+    """Scaffold a project from a project template.
+
+    Args:
+        project_template: The project template to use for scaffolding.
+        default: Whether to use default values without prompting.
+        output_dir: The directory where the project will be created.
+        checkout: The git branch or tag to checkout.
+    """
     template = project_template.project_type_as_enum.project_location
     typer.echo(
         f"Scaffolding a {project_template.project_type} project template from {template}"
@@ -65,6 +81,14 @@ def scaffold_cookiecutter(
     output_dir: pl.Path = pl.Path("."),
     checkout: str = "main",
 ):
+    """Scaffold a project using cookiecutter.
+
+    Args:
+        project_type: The type of project to scaffold.
+        default: Whether to use default values without prompting.
+        output_dir: The directory where the project will be created.
+        checkout: The git branch or tag to checkout.
+    """
     template = project_type.project_location
     typer.echo(f"Scaffolding a {project_type} project template from {template}")
     cookiecutter(
@@ -77,4 +101,9 @@ def scaffold_cookiecutter(
 
 
 def scaffold_monorepo(components: List[ProjectTemplate]):
+    """Scaffold a monorepo with multiple components.
+
+    Args:
+        components: List of project templates to scaffold.
+    """
     pass

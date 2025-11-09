@@ -20,20 +20,21 @@ class PoetryPM:
         If Poetry is not found, it will print a message and exit the program.
         """
         self.poetry_executable = shutil.which("poetry")
-        if self.poetry_executable:
-            result = sp.run(
-                [self.poetry_executable, "--version"],
-                stdout=sp.PIPE,
-                stderr=sp.PIPE,
-                check=True,
-                text=True,
-            )
-            poetry_version = result.stdout.strip()
-            typer.echo(f"Poetry executable: {self.poetry_executable}")
-            typer.echo(f"Poetry version: {poetry_version}")
-        else:
+
+        if not self.poetry_executable:
             typer.echo("Poetry is not installed or not found on this machine.")
             raise typer.Exit()
+
+        result: sp.CompletedProcess = sp.run(  # noqa: S603
+            [self.poetry_executable, "--version"],
+            stdout=sp.PIPE,
+            stderr=sp.PIPE,
+            check=True,
+            text=True,
+        )
+        poetry_version = result.stdout.strip()
+        typer.echo(f"Poetry executable: {self.poetry_executable}")
+        typer.echo(f"Poetry version: {poetry_version}")
 
     def install(self, cwd: pl.Path) -> None:
         """Installs dependencies in the specified working directory using Poetry.
@@ -48,7 +49,7 @@ class PoetryPM:
         """
         try:
             typer.echo(f"Installing component {cwd}...")
-            result: sp.CompletedProcess = sp.run(
+            result: sp.CompletedProcess = sp.run(  # noqa: S603
                 [self.poetry_executable, "install"],
                 stdout=sp.PIPE,
                 stderr=sp.PIPE,
@@ -66,7 +67,7 @@ class PoetryPM:
                 raise typer.Exit()
         except sp.CalledProcessError:
             typer.echo("An error occurred while running 'poetry install'.", color="red")
-            raise typer.Exit()
+            raise typer.Exit() from None
 
     def remove(self, cwd: pl.Path, dependency: str) -> None:
         """Removes a specified dependency from the working directory using Poetry.
@@ -83,7 +84,7 @@ class PoetryPM:
         """
         try:
             typer.echo(f"Removing dependency {dependency} from {cwd}...")
-            result: sp.CompletedProcess = sp.run(
+            result: sp.CompletedProcess = sp.run(  # noqa: S603
                 [self.poetry_executable, "remove", dependency],
                 stdout=sp.PIPE,
                 stderr=sp.PIPE,
@@ -105,4 +106,4 @@ class PoetryPM:
                 f"An error occurred while running 'poetry remove {dependency}'.",
                 color="red",
             )
-            raise typer.Exit()
+            raise typer.Exit() from None
