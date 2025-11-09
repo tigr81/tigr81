@@ -2,9 +2,7 @@ name: tigr81 CI CD
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
+
 
 permissions:
   contents: read
