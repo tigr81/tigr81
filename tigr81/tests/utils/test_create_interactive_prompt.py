@@ -10,7 +10,7 @@ def test_create_interactive_prompt(mocker: MockerFixture):
     message = "Pick a fruit"
     display_transform = str.upper
 
-    mock_prompt = mocker.patch(
+    mocker.patch(
         "tigr81.utils.interactive_prompt.prompt",
         return_value={"selection": "banana"},
     )
