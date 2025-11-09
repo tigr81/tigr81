@@ -1,0 +1,61 @@
+name: gcp-rag
+relative_path: src/backend
+description: A full Google Cloud RAG application inside a monorepo.
+
+components:
+  - project_type: fastapi
+    project_options:
+      name: searcher
+      package_name: searcher
+      description: Fast API app the expose search and generative endpoints
+    dependencies:
+      - name: gcp-gcs
+        relative_path: ../common/google/gcp-gcs
+      - name: chat-layer
+        relative_path: ../common/chat-layer
+      - name: semantic-layer
+        relative_path: ../common/semantic-layer
+  - project_type: fastapi
+    project_options:
+      name: processor
+      package_name: processor
+      description: Fast API app the expose upload and index endpoints
+    dependencies:
+      - name: gcp-gcs
+        relative_path: ../common/google/gcp-gcs
+      - name: gcp-doc-ai
+        relative_path: ../common/google/gcp-doc-ai
+      - name: gcp-pub-sub
+        relative_path: ../common/google/gcp-pub-sub
+      - name: semantic-layer
+        relative_path: ../common/semantic-layer
+  - project_type: poetry_pkg
+    relative_path: common/google
+    project_options:
+      name: gcp-gcs
+      package_name: gcp_gcs
+      description: A python pkg with the Google Cloud Storage Connector.
+  - project_type: poetry_pkg
+    relative_path: common/google
+    project_options:
+      name: gcp-doc-ai
+      package_name: gcp_doc_ai
+      description: A python pkg with the Google Document AI Connector.
+  - project_type: poetry_pkg
+    relative_path: common/google
+    project_options:
+      name: gcp-pub-sub
+      package_name: gcp_pub_sub
+      description: A python pkg with the Google Document AI Connector.
+  - project_type: poetry_pkg
+    relative_path: common
+    project_options:
+      name: semantic-layer
+      package_name: semantic_layer
+      description: A python pkg with the semantic search utilities
+  - project_type: poetry_pkg
+    relative_path: common
+    project_options:
+      name: chat-layer
+      package_name: chat_layer
+      description: A python pkg with the chat utilities

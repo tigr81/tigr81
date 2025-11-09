@@ -1,0 +1,67 @@
+name: primereact_examples
+hub_templates:
+  astro-basic-ts:
+    name: astro-basic-ts
+    template: https://github.com/primefaces/primereact-examples
+    directory: astro-basic-ts
+    template_type: raw_git
+  cra-basic-ts:
+    name: cra-basic-ts
+    template: https://github.com/primefaces/primereact-examples
+    directory: cra-basic-ts
+    template_type: raw_git
+  cra-basic:
+    name: cra-basic
+    template: https://github.com/primefaces/primereact-examples
+    directory: cra-basic
+    template_type: raw_git
+  nextjs-app-router-styled-tailwind:
+    name: nextjs-app-router-styled-tailwind
+    template: https://github.com/primefaces/primereact-examples
+    directory: nextjs-app-router-styled-tailwind
+    template_type: raw_git
+  nextjs-basic:
+    name: nextjs-basic
+    template: https://github.com/primefaces/primereact-examples
+    directory: nextjs-basic
+    template_type: raw_git
+  nextjs-crud:
+    name: nextjs-crud
+    template: https://github.com/primefaces/primereact-examples
+    directory: nextjs-crud
+    template_type: raw_git
+  nextjs-quickstart-ts:
+    name: nextjs-quickstart-ts
+    template: https://github.com/primefaces/primereact-examples
+    directory: nextjs-quickstart-ts
+    template_type: raw_git
+  nextjs-styled-tailwind:
+    name: nextjs-styled-tailwind
+    template: https://github.com/primefaces/primereact-examples
+    directory: nextjs-styled-tailwind
+    template_type: raw_git
+  nextjs-unstyled-tailwind:
+    name: nextjs-unstyled-tailwind
+    template: https://github.com/primefaces/primereact-examples
+    directory: nextjs-unstyled-tailwind
+    template_type: raw_git
+  vite-basic-ts:
+    name: vite-basic-ts
+    template: https://github.com/primefaces/primereact-examples
+    directory: vite-basic-ts
+    template_type: raw_git
+  vite-preact:
+    name: vite-preact
+    template: https://github.com/primefaces/primereact-examples
+    directory: vite-preact
+    template_type: raw_git
+  vite-styled-tailwind:
+    name: vite-styled-tailwind
+    template: https://github.com/primefaces/primereact-examples
+    directory: vite-styled-tailwind
+    template_type: raw_git
+  vite-unstyled-tailwind:
+    name: vite-unstyled-tailwind
+    template: https://github.com/primefaces/primereact-examples
+    directory: vite-unstyled-tailwind
+    template_type: raw_git
