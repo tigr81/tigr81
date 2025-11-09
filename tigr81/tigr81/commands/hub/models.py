@@ -73,7 +73,7 @@ class HubTemplate(BaseModel):
         if not template_pl.exists() or not template_pl.is_dir():
             checkout = typer.prompt(
                 "Enter the checkout (only needed for remote template)",
-                default="develop",
+                default="main",
             )
             directory = typer.prompt(
                 "Enter the relative path to a template in a repository (only needed for remote template)",
