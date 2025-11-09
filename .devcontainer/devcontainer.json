@@ -1,0 +1,33 @@
+{
+	"name": "tigr81 Dev Container",
+	"image": "mcr.microsoft.com/devcontainers/python:1-3.9-bullseye",
+	
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
+	
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+	"workspaceFolder": "/workspace",
+	
+	"postCreateCommand": "curl -LsSf https://astral.sh/uv/install.sh | sh && echo 'export PATH=\"$HOME/.cargo/bin:$PATH\"' >> ~/.bashrc && echo 'export PATH=\"$HOME/.cargo/bin:$PATH\"' >> ~/.zshrc && echo 'export PATH=\"$HOME/.cargo/bin:$PATH\"' >> ~/.profile && export PATH=\"$HOME/.cargo/bin:$PATH\" && uv --version",
+	
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"charliermarsh.ruff"
+			],
+			"settings": {
+				"python.defaultInterpreterPath": "/usr/local/bin/python"
+			}
+		}
+	},
+	
+	"remoteUser": "vscode",
+	
+	"remoteEnv": {
+		"PATH": "/home/vscode/.cargo/bin:${containerEnv:PATH}"
+	}
+}
+
