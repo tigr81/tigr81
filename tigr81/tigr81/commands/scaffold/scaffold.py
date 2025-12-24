@@ -115,7 +115,7 @@ def scaffold(
     typer.echo("scaffolding checkout")
     typer.echo(f"Tag: {checkout}")
 
-    if project_type == ProjectTypeEnum.PRIME_REACT:
+    if project_type in [ProjectTypeEnum.PRIME_REACT, ProjectTypeEnum.SHADCN_UI]:
         scaffold_core.scaffold_cookiecutter(
             project_type=project_type,
             default=default,
