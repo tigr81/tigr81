@@ -1,7 +1,5 @@
 import pathlib as pl
 
-__version__ = "1.2.2"
-
 PACKAGE_LOCATION = pl.Path(__file__).parent.resolve()
 ROOT_LOCATION = PACKAGE_LOCATION.parent
 LOCAL_REPO_LOCATION = ROOT_LOCATION.parent
