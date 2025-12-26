@@ -19,6 +19,8 @@ class ProjectTypeEnum(tigr81_utils.StrEnum):
     """Poetry package project template."""
     PRIME_REACT = "prime-react"
     """PrimeReact project template."""
+    SHADCN_UI = "shadcn-ui"
+    """Shadcn UI project template."""
 
     @property
     def project_location(self):
@@ -34,7 +36,8 @@ class ProjectTypeEnum(tigr81_utils.StrEnum):
 ICON_MAPPING = {
     ProjectTypeEnum.FAST_API: "🌐",
     ProjectTypeEnum.POETRY_PKG: "📦",
-    ProjectTypeEnum.PRIME_REACT: "⚛️ ",
+    ProjectTypeEnum.PRIME_REACT: "⚛️",
+    ProjectTypeEnum.SHADCN_UI: "🖌️",
 }
 
 

@@ -1,7 +1,7 @@
 [project]
 name = "tigr81"
 version = "1.2.2"
-description = ""
+description = "Project scaffolder for humans."
 authors = [
     {name = "Giuseppe Ambrosio", email = "giuambro97@gmail.com"}
 ]
