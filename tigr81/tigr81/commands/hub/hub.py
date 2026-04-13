@@ -2,7 +2,7 @@
 
 - Configure you hub template (also private hub templates)
 - Scaffold a project template from hub templates
-- Add hub templates (public, private, local)
+- Add hub templates (public, private, local) or a template to an existing hub
 - Update hub templates properties
 - Delete hub templates
 """
@@ -23,7 +23,7 @@ from tigr81.commands.hub.helpers import (
     is_hub_name_valid,
     load_hubs,
 )
-from tigr81.commands.hub.models import Hub, TemplateTypeEnum
+from tigr81.commands.hub.models import Hub, HubTemplate, TemplateTypeEnum
 
 app = typer.Typer()
 
@@ -36,8 +36,49 @@ def callback():
 
 
 @app.command()
-def add():
-    """Add a new hub templates."""
+def add(
+    hub_name: Annotated[
+        Optional[str],
+        typer.Argument(
+            help="If set, add template(s) to this existing hub; otherwise create a new hub"
+        ),
+    ] = None,
+):
+    """Add a new hub, or add template(s) to an existing hub when HUB_NAME is given."""
+    if hub_name is not None:
+        hubs = load_hubs()
+        if len(hubs) == 0:
+            typer.echo("No hubs were found.")
+            raise typer.Exit(1)
+
+        selected_hub = hubs.get(hub_name)
+        if not selected_hub:
+            typer.echo(f"The hub name '{hub_name}' does not exist.")
+            raise typer.Exit(1)
+
+        typer.echo(f"Adding templates to hub '{hub_name}'...")
+        added_any = False
+        while typer.confirm("Do you want to add a template?", default=True):
+            hub_template = HubTemplate.prompt()
+            if hub_template.name in selected_hub.hub_templates:
+                typer.echo(
+                    f"Template '{hub_template.name}' already exists in hub '{hub_name}'."
+                )
+                raise typer.Exit(1)
+            selected_hub.hub_templates[hub_template.name] = hub_template
+            added_any = True
+            typer.echo(
+                f"Template '{hub_template.name}' added to hub '{hub_name}'."
+            )
+
+        if not added_any:
+            typer.echo("No templates added.")
+            return
+
+        selected_hub.to_yaml(USER_HUB_LOCATION)
+        typer.echo(f"Hub '{hub_name}' saved successfully.")
+        return
+
     hub = Hub.prompt()
 
     if not is_hub_name_valid(hub.name):
