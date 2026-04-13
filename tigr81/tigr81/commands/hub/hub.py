@@ -8,7 +8,7 @@
 """
 
 import pathlib as pl
-from typing import Optional
+from typing import Optional, Tuple
 
 import copier
 import typer
@@ -30,6 +30,90 @@ app = typer.Typer()
 default_hub = Hub.from_yaml(path=DEFAULT_HUB_LOCATION)
 
 
+def _resolve_checkout_directory(
+    template: str,
+    checkout: Optional[str],
+    directory: Optional[str],
+) -> Tuple[Optional[str], Optional[str]]:
+    """Match HubTemplate.prompt defaults: local dirs skip checkout/directory."""
+    template_pl = pl.Path(template)
+    if template_pl.exists() and template_pl.is_dir():
+        return None, None
+    resolved_checkout = checkout if checkout is not None else "main"
+    resolved_directory = directory if directory is not None else "."
+    return resolved_checkout, resolved_directory
+
+
+def _add_template_cli(
+    hub_name: str,
+    template_name: str,
+    template: str,
+    template_type: TemplateTypeEnum,
+    checkout: Optional[str],
+    directory: Optional[str],
+) -> None:
+    """Add one template from CLI flags; create the hub YAML under ~/.tigr81rc if needed."""
+    hubs = load_hubs()
+    selected_hub = hubs.get(hub_name)
+    if selected_hub is None:
+        selected_hub = Hub(name=hub_name, hub_templates={})
+    elif template_name in selected_hub.hub_templates:
+        typer.echo(
+            f"Template '{template_name}' already exists in hub '{hub_name}'."
+        )
+        raise typer.Exit(1)
+
+    co, di = _resolve_checkout_directory(template, checkout, directory)
+    hub_template = HubTemplate(
+        name=template_name,
+        template=template,
+        checkout=co,
+        directory=di,
+        template_type=template_type,
+    )
+    selected_hub.hub_templates[template_name] = hub_template
+    selected_hub.to_yaml(USER_HUB_LOCATION)
+    typer.echo(
+        f"Template '{template_name}' added to hub '{hub_name}' (saved under {USER_HUB_LOCATION})."
+    )
+
+
+def _interactive_add_to_hub(hub_name: str) -> None:
+    """Prompt-driven: append templates to a hub that already exists in config."""
+    hubs = load_hubs()
+    if len(hubs) == 0:
+        typer.echo(
+            "No hubs were found. To create a hub with a template in one step, use:\n"
+            "  tigr81 hub add HUB_NAME TEMPLATE_NAME --template URL --type cookiecutter|copier|raw_git"
+        )
+        raise typer.Exit(1)
+
+    selected_hub = hubs.get(hub_name)
+    if not selected_hub:
+        typer.echo(f"The hub name '{hub_name}' does not exist.")
+        raise typer.Exit(1)
+
+    typer.echo(f"Adding templates to hub '{hub_name}'...")
+    added_any = False
+    while typer.confirm("Do you want to add a template?", default=True):
+        hub_template = HubTemplate.prompt()
+        if hub_template.name in selected_hub.hub_templates:
+            typer.echo(
+                f"Template '{hub_template.name}' already exists in hub '{hub_name}'."
+            )
+            raise typer.Exit(1)
+        selected_hub.hub_templates[hub_template.name] = hub_template
+        added_any = True
+        typer.echo(f"Template '{hub_template.name}' added to hub '{hub_name}'.")
+
+    if not added_any:
+        typer.echo("No templates added.")
+        return
+
+    selected_hub.to_yaml(USER_HUB_LOCATION)
+    typer.echo(f"Hub '{hub_name}' saved successfully.")
+
+
 @app.callback()
 def callback():
     """Handle hub templates."""
@@ -40,43 +124,85 @@ def add(
     hub_name: Annotated[
         Optional[str],
         typer.Argument(
-            help="If set, add template(s) to this existing hub; otherwise create a new hub"
+            help="Hub to add the template to (created under user config if it does not exist)"
+        ),
+    ] = None,
+    template_name: Annotated[
+        Optional[str],
+        typer.Argument(
+            help="Name for the template entry (required with --template and --type)"
+        ),
+    ] = None,
+    template: Annotated[
+        Optional[str],
+        typer.Option(
+            "--template",
+            "-t",
+            help="Git URL or local path to the template",
+        ),
+    ] = None,
+    template_type: Annotated[
+        Optional[TemplateTypeEnum],
+        typer.Option(
+            "--type",
+            help="Template backend: cookiecutter, copier, or raw_git",
+            case_sensitive=False,
+        ),
+    ] = None,
+    checkout: Annotated[
+        Optional[str],
+        typer.Option(
+            "--checkout",
+            "-c",
+            help="Branch, tag, or commit for remote templates (default: main)",
+        ),
+    ] = None,
+    directory: Annotated[
+        Optional[str],
+        typer.Option(
+            "--directory",
+            "-d",
+            help="Path inside the repo for remote templates (default: .)",
         ),
     ] = None,
 ):
-    """Add a new hub, or add template(s) to an existing hub when HUB_NAME is given."""
+    """Add a new hub, or add template(s) to a hub.
+
+    Non-interactive (single command): pass HUB_NAME, TEMPLATE_NAME, --template, and --type.
+    Example: tigr81 hub add my-hub my-template -t https://github.com/org/cookiecutter-py --type cookiecutter -c main
+
+    Interactive: run ``tigr81 hub add`` to create a hub, or ``tigr81 hub add HUB_NAME`` to add templates with prompts.
+    """
+    if (
+        hub_name is not None
+        and template_name is not None
+        and template is not None
+        and template_type is not None
+    ):
+        _add_template_cli(
+            hub_name=hub_name,
+            template_name=template_name,
+            template=template,
+            template_type=template_type,
+            checkout=checkout,
+            directory=directory,
+        )
+        return
+
+    cli_partial = any(
+        x is not None
+        for x in (template_name, template, template_type, checkout, directory)
+    )
+    if hub_name is not None and cli_partial:
+        typer.echo(
+            "Incomplete non-interactive add: provide HUB_NAME, TEMPLATE_NAME, "
+            "--template (-t), and --type together, or omit template options "
+            "and use interactive mode (only HUB_NAME)."
+        )
+        raise typer.Exit(1)
+
     if hub_name is not None:
-        hubs = load_hubs()
-        if len(hubs) == 0:
-            typer.echo("No hubs were found.")
-            raise typer.Exit(1)
-
-        selected_hub = hubs.get(hub_name)
-        if not selected_hub:
-            typer.echo(f"The hub name '{hub_name}' does not exist.")
-            raise typer.Exit(1)
-
-        typer.echo(f"Adding templates to hub '{hub_name}'...")
-        added_any = False
-        while typer.confirm("Do you want to add a template?", default=True):
-            hub_template = HubTemplate.prompt()
-            if hub_template.name in selected_hub.hub_templates:
-                typer.echo(
-                    f"Template '{hub_template.name}' already exists in hub '{hub_name}'."
-                )
-                raise typer.Exit(1)
-            selected_hub.hub_templates[hub_template.name] = hub_template
-            added_any = True
-            typer.echo(
-                f"Template '{hub_template.name}' added to hub '{hub_name}'."
-            )
-
-        if not added_any:
-            typer.echo("No templates added.")
-            return
-
-        selected_hub.to_yaml(USER_HUB_LOCATION)
-        typer.echo(f"Hub '{hub_name}' saved successfully.")
+        _interactive_add_to_hub(hub_name)
         return
 
     hub = Hub.prompt()
