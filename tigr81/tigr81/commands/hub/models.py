@@ -150,7 +150,7 @@ class Hub(BaseModel):
         Returns:
             str: Formatted string detailing hub information.
         """
-        hub_templates_str = "".join([f"{ht}" for ht in self.hub_templates.values()])
+        hub_templates_str = "".join([f"{i+1}. {ht}\n" for i,ht in enumerate(self.hub_templates.values())])
         return f"""Hub info
 hub name: {self.name}
 hub templates:\n\n{hub_templates_str}
