@@ -82,6 +82,130 @@ def test_hub_remove_wrong_hub_name(mocker: MockerFixture):
     assert result.exit_code == 0
 
 
+def test_hub_remove_deletes_existing_hub(tmp_path: pl.Path, mocker: MockerFixture):
+    """Removing a hub by name deletes its YAML file."""
+    mocker.patch("tigr81.commands.hub.hub.USER_HUB_LOCATION", tmp_path)
+    hub = Hub(
+        name="hub1",
+        hub_templates={
+            "t1": HubTemplate(
+                name="t1",
+                template="https://example.com/t1",
+                template_type=TemplateTypeEnum.COOKIECUTTER,
+            )
+        },
+    )
+    hub.to_yaml(tmp_path)
+
+    result = runner.invoke(app, ["hub", "remove", "hub1"])
+
+    assert result.exit_code == 0
+    assert not (tmp_path / "hub1.yml").exists()
+    assert "Hub 'hub1' deleted successfully." in result.stdout
+
+
+def test_hub_remove_template_deletes_existing_template(
+    tmp_path: pl.Path, mocker: MockerFixture, mock_hub_template: HubTemplate
+):
+    """Second positional argument removes that template and keeps the hub file."""
+    mocker.patch("tigr81.commands.hub.hub.USER_HUB_LOCATION", tmp_path)
+    keep = HubTemplate(
+        name="keep",
+        template="https://example.com/keep",
+        template_type=TemplateTypeEnum.COPIER,
+    )
+    hub = Hub(
+        name="hub1",
+        hub_templates={
+            mock_hub_template.name: mock_hub_template,
+            keep.name: keep,
+        },
+    )
+    hub.to_yaml(tmp_path)
+
+    result = runner.invoke(
+        app, ["hub", "remove", "hub1", mock_hub_template.name]
+    )
+
+    assert result.exit_code == 0
+    saved = Hub.from_yaml(tmp_path / "hub1.yml")
+    assert mock_hub_template.name not in saved.hub_templates
+    assert keep.name in saved.hub_templates
+    assert (
+        f"Hub template '{mock_hub_template.name}' deleted successfully."
+        in result.stdout
+    )
+
+
+def test_hub_remove_template_interactive(
+    tmp_path: pl.Path, mocker: MockerFixture, mock_hub_template: HubTemplate
+):
+    """--template / -t opens the interactive template picker (no second argument)."""
+    mocker.patch("tigr81.commands.hub.hub.USER_HUB_LOCATION", tmp_path)
+    keep = HubTemplate(
+        name="keep",
+        template="https://example.com/keep",
+        template_type=TemplateTypeEnum.COPIER,
+    )
+    hub = Hub(
+        name="hub1",
+        hub_templates={
+            mock_hub_template.name: mock_hub_template,
+            keep.name: keep,
+        },
+    )
+    hub.to_yaml(tmp_path)
+    mocker.patch(
+        "tigr81.commands.hub.hub.tigr81_utils.create_interactive_prompt",
+        return_value=mock_hub_template.name,
+    )
+
+    result = runner.invoke(app, ["hub", "remove", "hub1", "--template"])
+
+    assert result.exit_code == 0
+    saved = Hub.from_yaml(tmp_path / "hub1.yml")
+    assert mock_hub_template.name not in saved.hub_templates
+    assert keep.name in saved.hub_templates
+
+
+def test_hub_remove_template_nonexistent_name(
+    tmp_path: pl.Path, mocker: MockerFixture, mock_hub_template: HubTemplate
+):
+    """Unknown template name as second argument fails; hub YAML is unchanged."""
+    mocker.patch("tigr81.commands.hub.hub.USER_HUB_LOCATION", tmp_path)
+    hub = Hub(
+        name="hub1",
+        hub_templates={mock_hub_template.name: mock_hub_template},
+    )
+    hub.to_yaml(tmp_path)
+
+    result = runner.invoke(app, ["hub", "remove", "hub1", "no_such_template"])
+
+    assert result.exit_code == 1
+    assert "does not exist" in result.stdout
+    saved = Hub.from_yaml(tmp_path / "hub1.yml")
+    assert mock_hub_template.name in saved.hub_templates
+
+
+def test_hub_remove_template_positional_and_flag_mutually_exclusive(
+    tmp_path: pl.Path, mocker: MockerFixture, mock_hub_template: HubTemplate
+):
+    """Passing both a template name and --template is rejected."""
+    mocker.patch("tigr81.commands.hub.hub.USER_HUB_LOCATION", tmp_path)
+    hub = Hub(
+        name="hub1",
+        hub_templates={mock_hub_template.name: mock_hub_template},
+    )
+    hub.to_yaml(tmp_path)
+
+    result = runner.invoke(
+        app, ["hub", "remove", "hub1", mock_hub_template.name, "--template"]
+    )
+
+    assert result.exit_code == 1
+    assert "not both" in result.stdout
+
+
 def test_hub_add_cli_creates_hub(tmp_path: pl.Path, mocker: MockerFixture):
     """Non-interactive add creates a new hub YAML when the hub name is unknown."""
     mocker.patch("tigr81.commands.hub.hub.USER_HUB_LOCATION", tmp_path)
