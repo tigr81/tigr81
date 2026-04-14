@@ -239,19 +239,32 @@ def list(  # noqa: A001
 
 @app.command()
 def remove(
-    delete_template: Annotated[
+    hub_name: Annotated[
+        Optional[str], typer.Argument(help="The name of the hub")
+    ] = None,
+    template_name: Annotated[
+        Optional[str],
+        typer.Argument(
+            help=(
+                "Template to remove from the hub. If omitted, the whole hub is removed "
+                "unless you pass --template to pick a template interactively."
+            ),
+        ),
+    ] = None,
+    interactive_template: Annotated[
         bool,
         typer.Option(
             "--template",
             "-t",
-            help="Delete a template inside a hub instead of the entire hub",
+            help=(
+                "Remove one template from the hub via an interactive prompt "
+                "(non-script use). To delete a specific template by name, use: "
+                "hub remove HUB TEMPLATE"
+            ),
         ),
     ] = False,
-    hub_name: Annotated[
-        Optional[str], typer.Argument(help="The name of the hub")
-    ] = None,
 ):
-    """Remove a hub or a hub template based on user choice."""
+    """Remove a hub, or remove one template from a hub."""
     hubs = load_hubs([USER_HUB_LOCATION])
 
     if len(hubs) == 0:
@@ -260,7 +273,7 @@ def remove(
 
     if hub_name is None:
         hub_name = tigr81_utils.create_interactive_prompt(
-            values=list(hubs.keys()),
+            values=[*hubs.keys()],
             message="Select a hub",
         )
 
@@ -270,27 +283,43 @@ def remove(
 
     selected_hub = hubs.get(hub_name)
 
-    if delete_template:
-        # Deleting a hub template
+    delete_one_template = template_name is not None or interactive_template
+
+    if delete_one_template:
+        if template_name is not None and interactive_template:
+            typer.echo(
+                "Use either `hub remove HUB TEMPLATE` or `hub remove HUB --template`, "
+                "not both."
+            )
+            raise typer.Exit(code=1)
+
         if len(selected_hub.hub_templates) == 0:
             typer.echo(f"The hub '{hub_name}' does not contain any hub templates.")
             raise typer.Exit()
 
-        hub_template_name_to_delete = tigr81_utils.create_interactive_prompt(
-            values=list(selected_hub.hub_templates.keys()),
-            message=f"Select a template from the hub '{hub_name}' to delete",  # noqa: S608
-        )
+        if template_name is not None:
+            hub_template_name_to_delete = template_name
+        else:
+            hub_template_name_to_delete = tigr81_utils.create_interactive_prompt(
+                values=[*selected_hub.hub_templates.keys()],
+                message=f"Select a template from the hub '{hub_name}' to delete",  # noqa: S608
+            )
+
+        if hub_template_name_to_delete not in selected_hub.hub_templates:
+            typer.echo(
+                f"The hub template '{hub_template_name_to_delete}' does not exist "
+                f"in hub '{hub_name}'."
+            )
+            raise typer.Exit(code=1)
 
         typer.echo(f"Deleting hub template '{hub_template_name_to_delete}'...")
         selected_hub.hub_templates.pop(hub_template_name_to_delete)
 
-        # Save the updated hub
         selected_hub.to_yaml(USER_HUB_LOCATION)
         typer.echo(
             f"Hub template '{hub_template_name_to_delete}' deleted successfully."
         )
     else:
-        # Deleting the entire hub
         hub_path = USER_HUB_LOCATION / f"{hub_name}.yml"
         typer.echo(f"Deleting hub '{hub_name}'...")
         hub_path.unlink()
@@ -321,7 +350,7 @@ def scaffold(
 
     if not hub_name:
         hub_name = tigr81_utils.create_interactive_prompt(
-            values=list(hubs.keys()),
+            values=[*hubs.keys()],
             message="Select the hub from which to scaffold the template",
         )
 
@@ -332,7 +361,7 @@ def scaffold(
 
     if not template_name:
         template_name = tigr81_utils.create_interactive_prompt(
-            values=list(selected_hub.hub_templates.keys()),
+            values=[*selected_hub.hub_templates.keys()],
             message=f"Select a template from the hub '{hub_name}'",  # noqa: S608
         )
 
